@@ -8,7 +8,7 @@ semanticPage(
   tags$br(),
   
   div(class = "ui grid centered two colum",
-      action_button(input_id = "start_training", label = "Start training"),
+      action_button(input_id = "train_more", label = "Start training"),
       action_button(input_id = "play_game", label = "Play a game")
   ),
   
@@ -32,6 +32,10 @@ semanticPage(
         action_button(input_id = "bottom_middle", label = ""),
         action_button(input_id = "bottom_right", label = ""),
     )
-  )
+  ),
+  
+  tags$br(),
+  
+  textOutput("TTJLevel")
   
 )

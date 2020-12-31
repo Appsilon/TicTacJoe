@@ -16,8 +16,12 @@ InitialTemperature = 0.9
 FinalTemperature = 0.03
 TemperatureDecreaseStep = (FinalTemperature-InitialTemperature)/LengthOfTraining   # How much to decrease in one step of training
 
+# Human player
 NiceColorPlayerOne = rgb(232, 85, 85, max=255)  # nice shade of red
+NiceIconPlayerOne = icon("circle outline")
+# TicTacJoe player
 NiceColorPlayerTwo = rgb(69, 177, 239, max=255) # nice shade of blue
+NiceIconPlayerTwo = icon("close icon")
 
 # Load precomputed game setup
 PrecomputedFilesLocation = "precomputed_state"
@@ -28,6 +32,22 @@ load(file=file.path(PrecomputedFilesLocation, "ProbStates.RData"))
 
 RandomProbStates = ProbStates  # this stores the untrained TicTacJoe
 
+# Update button after click
+UpdateButton = function(WhichButton, isHuman) {
+  # Button is from the top_left, top_middle, top_right, middle_left, ... convention
+  # isHuman is TRUE if it is the user, FALSE if it is the TicTacJoe
+  if(isHuman){
+    runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{NiceColorPlayerOne}";'))
+    # update_action_button(session, input_id = WhichButton, icon = NiceIconPlayerOne)
+  } else {
+    runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{NiceColorPlayerTwo}";'))
+    # update_action_button(session, input_id = WhichButton, icon = NiceIconPlayerTwo)
+  }
+  return()
+}
+
+# TicTacJoe difficulty levels
+TTJLevels = c("Noob", "Young Padawan", "Guru")
 
 # Define Normalization function
 Normalize = function(Vector) {
