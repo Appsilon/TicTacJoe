@@ -1,0 +1,13 @@
+#top_left, #top_right, #top_middle,
+#middle_left, #middle_middle, #middle_right,
+#bottom_left, #bottom_middle, #bottom_right {
+  width: 200px;
+  height: 200px;
+  margin: 2px 2px 0 0;
+  font-size: 72px;
+  color: white;
+}
+
+.ui.button:not(.icon)>.icon:not(.button):not(.dropdown), .ui.button:not(.icon)>.icons:not(.button):not(.dropdown) {
+    margin: 0 0 0 0;
+}
