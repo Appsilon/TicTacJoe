@@ -148,9 +148,15 @@ server <- function(input, output, session) {
   observeEvent(input$train_more,{
     if(val$level_idx < length(TTJLevels)){
       val$level_idx = val$level_idx + 1
+      for (i in 0:floor(LengthOfTraining/2)) {
+        ProbStates <<- RunTicTacToeComputerVSComputer(States,StopStates,LinkedStates,ProbStates,Temperature)
+        Temperature <<- Temperature + TemperatureDecreaseStep
+      }
+      print(ProbStates[[1]][[1]])
+      print(Temperature)
     }
   })
 
-  output$TTJLevel <- renderText(paste0("TicTacJoe is a ", TTJLevels[[val$level_idx]]))
+  output$TTJLevel <- renderText(paste0("TicTacJoe is a ", TTJLevels[[val$level_idx]], "  prob of corner: ", ProbStates[[1]][[1]][[1]]))
     
 }

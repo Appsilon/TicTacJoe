@@ -15,6 +15,8 @@ LengthOfTraining = 100000   # Total number of games until expert
 InitialTemperature = 0.9
 FinalTemperature = 0.03
 TemperatureDecreaseStep = (FinalTemperature-InitialTemperature)/LengthOfTraining   # How much to decrease in one step of training
+Temperature = InitialTemperature
+
 
 # Human player
 NiceColorPlayerOne = rgb(232, 85, 85, max=255)  # nice shade of red
@@ -94,5 +96,26 @@ UpdateProbabilitiesUsingPath = function(path, StopStates, LinkedStates, ProbStat
     ProbStates[[k-1]][[path[k-1]]] = Softmax(calculate_probabilities + adj_prob, Temperature)
   }
   
+  return(ProbStates)
+}
+
+# Run a game of TicTacJoe vs TicTacJoe
+RunTicTacToeComputerVSComputer = function(States,StopStates,LinkedStates,ProbStates,Temperature) {
+  N = length(ProbStates)-1
+  Path_Run = 1
+  Selected_Moves = runif(N,0,1)
+  Probabilities = cumsum(ProbStates[[1]][[1]])
+  i=2
+  while (StopStates[[i-1]][[Path_Run[i-1]]]==0 && i<=9) {
+    Probabilities = cumsum(ProbStates[[i-1]][[Path_Run[i-1]]])
+    Path_Run[i] = LinkedStates[[i-1]][[Path_Run[i-1]]][which(Selected_Moves[[i-1]] < Probabilities)[1]]
+    i = i + 1
+  }
+  if (length(Path_Run)==N) {
+    if (StopStates[[length(Path_Run)]][[Path_Run[length(Path_Run)]]] == 0) {
+      Path_Run[N+1] = LinkedStates[[N]][[Path_Run[length(Path_Run)]]]
+    }
+  }
+  ProbStates = UpdateProbabilitiesUsingPath(Path_Run,StopStates,LinkedStates,ProbStates,0,Temperature)
   return(ProbStates)
 }
