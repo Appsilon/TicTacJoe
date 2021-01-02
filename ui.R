@@ -7,9 +7,16 @@ semanticPage(
   
   tags$br(),
   
-  div(class = "ui grid centered two colum",
-      action_button(input_id = "train_more", label = "Start training"),
+  div(class = "ui grid centered",
       action_button(input_id = "play_game", label = "Play a game")
+  ),
+  
+  tags$br(),
+  tags$br(),
+  
+  div(class = "ui grid centered two colum",
+      action_button(input_id = "train_more", label = "Let TicTacJoe train"),
+      action_button(input_id = "flush_training", label = "Flush TicTacJoe's skills")
   ),
   
   modal(

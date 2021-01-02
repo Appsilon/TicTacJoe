@@ -145,6 +145,24 @@ server <- function(input, output, session) {
   ##########################
   # Train
   ##########################
+  observe({
+    if(val$level_idx == 1){
+      shinyjs::disable("flush_training")
+      shinyjs::enable("train_more")
+    } else {
+      shinyjs::enable("flush_training")
+      if(val$level_idx == 3) {
+        shinyjs::disable("train_more")
+      }
+    }
+  })
+  
+  observeEvent(input$flush_training,{
+    ProbStates <<- RandomProbStates
+    Temperature <<- InitialTemperature
+    val$level_idx = 1
+  })
+  
   observeEvent(input$train_more,{
     if(val$level_idx < length(TTJLevels)){
       val$level_idx = val$level_idx + 1
