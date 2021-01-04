@@ -1,7 +1,8 @@
 server <- function(input, output, session) {
   
   val <- reactiveValues(
-    level_idx = 1
+    level_idx = 1,
+    training_step = 1
   )
   
   # reac <- reactiveValues(
@@ -103,39 +104,40 @@ server <- function(input, output, session) {
   # })
   
   observeEvent(input$top_left,{
-    UpdateButton(WhichButton="top_left", isHuman=TRUE)
+    UpdateButton(WhichButton="top_left", isHuman=TRUE, session)
+    # val$player_chose = "top_left"
   })
   observeEvent(input$top_middle,{
-    UpdateButton(WhichButton="top_middle", isHuman=TRUE)
+    UpdateButton(WhichButton="top_middle", isHuman=TRUE, session)
   })
   observeEvent(input$top_right,{
-    UpdateButton(WhichButton="top_right", isHuman=TRUE)
+    UpdateButton(WhichButton="top_right", isHuman=TRUE, session)
   })
   observeEvent(input$middle_left,{
-    UpdateButton(WhichButton="middle_left", isHuman=TRUE)
+    UpdateButton(WhichButton="middle_left", isHuman=TRUE, session)
   })
   observeEvent(input$middle_middle,{
-    UpdateButton(WhichButton="middle_middle", isHuman=TRUE)
+    UpdateButton(WhichButton="middle_middle", isHuman=TRUE, session)
   })
   observeEvent(input$middle_right,{
-    UpdateButton(WhichButton="middle_right", isHuman=TRUE)
+    UpdateButton(WhichButton="middle_right", isHuman=TRUE, session)
   })
   observeEvent(input$bottom_left,{
-    UpdateButton(WhichButton="bottom_left", isHuman=TRUE)
+    UpdateButton(WhichButton="bottom_left", isHuman=TRUE, session)
   })
   observeEvent(input$bottom_middle,{
-    UpdateButton(WhichButton="bottom_middle", isHuman=TRUE)
+    UpdateButton(WhichButton="bottom_middle", isHuman=TRUE, session)
   })
   observeEvent(input$bottom_right,{
-    UpdateButton(WhichButton="bottom_right", isHuman=TRUE)
+    UpdateButton(WhichButton="bottom_right", isHuman=TRUE, session)
   })
 
   observe({
     delay(5000, {
-      UpdateButton(WhichButton="top_left", isHuman=FALSE)
+      UpdateButton(WhichButton="top_left", isHuman=FALSE, session)
       # reac$tl <- "TTJ"
       delay(5000, {
-        UpdateButton(WhichButton="bottom_left", isHuman=FALSE)
+        UpdateButton(WhichButton="bottom_left", isHuman=FALSE, session)
         # reac$bl <- "TTJ"
       })
     })
@@ -165,16 +167,33 @@ server <- function(input, output, session) {
   
   observeEvent(input$train_more,{
     if(val$level_idx < length(TTJLevels)){
-      val$level_idx = val$level_idx + 1
       for (i in 0:floor(LengthOfTraining/2)) {
         ProbStates <<- RunTicTacToeComputerVSComputer(States,StopStates,LinkedStates,ProbStates,Temperature)
         Temperature <<- Temperature + TemperatureDecreaseStep
+        check_prob[i + floor(LengthOfTraining/2)*(val$level_idx - 1)] <<- ProbStates[[2]][[3]][[1]]
+        if(i %% 500 == 0){
+          output$move_prob <- renderPlot(plot(check_prob, type='l'))
+        }
+        # val$training_step = val$training_step + 1
       }
+      val$level_idx = val$level_idx + 1
       print(ProbStates[[1]][[1]])
       print(Temperature)
     }
   })
 
   output$TTJLevel <- renderText(paste0("TicTacJoe is a ", TTJLevels[[val$level_idx]], "  prob of corner: ", ProbStates[[1]][[1]][[1]]))
-    
+
+  # observe({
+  #   if(val$training_step > 1){
+  #     output$move_prob <- renderPlot(plot(check_prob, type='l'))#[seq(1, length(check_prob), 200)], type='l'))     
+  #     # output$move_prob_1 <- renderPlot(plot(check_prob[1], type='l'))#[seq(1, length(check_prob), 200)], type='l'))     
+  #     # output$move_prob_2 <- renderPlot(plot(check_prob[2], type='l'))#[seq(1, length(check_prob), 200)], type='l'))     
+  #     # output$move_prob_3 <- renderPlot(plot(check_prob[3], type='l'))#[seq(1, length(check_prob), 200)], type='l'))     
+  #   }
+  # })
+  # 
 }
+
+# plot(check_prob[seq(50000, length(check_prob)+50000, 200)], type='l')
+# plot(check_prob[seq(1, length(check_prob), 200)], type='l')

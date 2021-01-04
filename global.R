@@ -35,15 +35,19 @@ load(file=file.path(PrecomputedFilesLocation, "ProbStates.RData"))
 RandomProbStates = ProbStates  # this stores the untrained TicTacJoe
 
 # Update button after click
-UpdateButton = function(WhichButton, isHuman) {
+UpdateButton = function(WhichButton, isHuman, session) {
   # Button is from the top_left, top_middle, top_right, middle_left, ... convention
   # isHuman is TRUE if it is the user, FALSE if it is the TicTacJoe
   if(isHuman){
+    shinyjs::disable(WhichButton)
+    # modify to keep the color from getting greyed
     runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{NiceColorPlayerOne}";'))
-    # update_action_button(session, input_id = WhichButton, icon = NiceIconPlayerOne)
-  } else {
+    update_action_button(session, input_id = WhichButton, icon = NiceIconPlayerOne)
+    } else {
+    shinyjs::disable(WhichButton)
+    # modify to keep the color from getting greyed
     runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{NiceColorPlayerTwo}";'))
-    # update_action_button(session, input_id = WhichButton, icon = NiceIconPlayerTwo)
+    update_action_button(session, input_id = WhichButton, icon = NiceIconPlayerTwo)
   }
   return()
 }
@@ -119,3 +123,6 @@ RunTicTacToeComputerVSComputer = function(States,StopStates,LinkedStates,ProbSta
   ProbStates = UpdateProbabilitiesUsingPath(Path_Run,StopStates,LinkedStates,ProbStates,0,Temperature)
   return(ProbStates)
 }
+
+# For plotting
+check_prob = 0
