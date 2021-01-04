@@ -2,7 +2,7 @@ server <- function(input, output, session) {
   
   val <- reactiveValues(
     level_idx = 1,
-    training_step = 1
+    training_step = 0
   )
   
   # reac <- reactiveValues(
@@ -166,24 +166,32 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$train_more,{
-    if(val$level_idx < length(TTJLevels)){
-      for (i in 0:floor(LengthOfTraining/2)) {
-        ProbStates <<- RunTicTacToeComputerVSComputer(States,StopStates,LinkedStates,ProbStates,Temperature)
-        Temperature <<- Temperature + TemperatureDecreaseStep
-        check_prob[i + floor(LengthOfTraining/2)*(val$level_idx - 1)] <<- ProbStates[[2]][[3]][[1]]
-        if(i %% 500 == 0){
-          output$move_prob <- renderPlot(plot(check_prob, type='l'))
+    if(isolate(val$level_idx) < length(TTJLevels)){
+      isolate({
+        for (i in 0:floor(LengthOfTraining/2)) {
+          ProbStates <<- RunTicTacToeComputerVSComputer(States,StopStates,LinkedStates,ProbStates,Temperature)
+          Temperature <<- Temperature + TemperatureDecreaseStep
+          check_prob[i + floor(LengthOfTraining/2)*(val$level_idx - 1)] <<- ProbStates[[1]][[1]][[1]]
+          val$training_step <- val$training_step + 1
         }
-        # val$training_step = val$training_step + 1
+        val$level_idx = val$level_idx + 1
+        print(ProbStates[[1]][[1]])
+        print(Temperature)
+      })
+      if(isolate(val$training_step) %% 500 == 0){
+        invalidateLater(0, session)
       }
-      val$level_idx = val$level_idx + 1
-      print(ProbStates[[1]][[1]])
-      print(Temperature)
     }
   })
 
   output$TTJLevel <- renderText(paste0("TicTacJoe is a ", TTJLevels[[val$level_idx]], "  prob of corner: ", ProbStates[[1]][[1]][[1]]))
 
+  # Todo: below, something is wrong with this plot (trying to follow https://gist.github.com/trestletech/8608815)
+  # observe({
+  #   output$move_prob <- renderPlot(plot(check_prob, type='l'),
+  #                                  points(val$training_step, 0, col="red"))#[seq(1, length(check_prob), 200)], type='l'))
+  # })
+  
   # observe({
   #   if(val$training_step > 1){
   #     output$move_prob <- renderPlot(plot(check_prob, type='l'))#[seq(1, length(check_prob), 200)], type='l'))     
