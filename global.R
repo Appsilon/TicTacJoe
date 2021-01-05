@@ -11,19 +11,21 @@ alfa_one = 0.5 # Relative convergence of probabilities of top level
 alfa_two = 0.6 # Relative convergence of probabilities of bottom level
 alfa = seq(alfa_one,alfa_two,(alfa_two-alfa_one)/N)
 
-LengthOfTraining = 10000 #100000   # Total number of games until expert
+LengthOfTraining = 1000 #100000   # Total number of games until expert
 InitialTemperature = 0.9
 FinalTemperature = 0.03
 TemperatureDecreaseStep = (FinalTemperature-InitialTemperature)/LengthOfTraining   # How much to decrease in one step of training
 Temperature = InitialTemperature
 
+# For plotting chunks
+steps_in_plot_chunk = 100 #5000
 
 # Human player
-NiceColorPlayerOne = rgb(232, 85, 85, max=255)  # nice shade of red
-NiceIconPlayerOne = icon("circle outline")
+NiceColorPlayerOne = rgb(69, 177, 239, max=255) # nice shade of blue
+NiceIconPlayerOne = icon("close icon")
 # TicTacJoe player
-NiceColorPlayerTwo = rgb(69, 177, 239, max=255) # nice shade of blue
-NiceIconPlayerTwo = icon("close icon")
+NiceColorPlayerTwo = rgb(165, 81, 184, max=255)  # nice shade of purple
+NiceIconPlayerTwo = icon("circle outline")
 
 # Load precomputed game setup
 PrecomputedFilesLocation = "precomputed_state"
@@ -123,6 +125,3 @@ RunTicTacToeComputerVSComputer = function(States,StopStates,LinkedStates,ProbSta
   ProbStates = UpdateProbabilitiesUsingPath(Path_Run,StopStates,LinkedStates,ProbStates,0,Temperature)
   return(ProbStates)
 }
-
-# For plotting
-steps_in_plot_chunk = 1000

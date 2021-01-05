@@ -4,7 +4,9 @@ server <- function(input, output, session) {
     level_idx = 1,
     run_training = FALSE,
     training_step = 0,
-    check_prob = 0
+    check_prob_1 = 0.33,
+    check_prob_2 = 0.33,
+    check_prob_3 = 0.33
   )
   
   # reac <- reactiveValues(
@@ -166,7 +168,9 @@ server <- function(input, output, session) {
     Temperature <<- InitialTemperature
     val$level_idx = 1
     val$training_step = 0
-    val$check_prob = 0
+    val$check_prob_1 = 0.33
+    val$check_prob_2 = 0.33
+    val$check_prob_3 = 0.33
   })
 
   observeEvent(input$train_more,{
@@ -180,7 +184,9 @@ server <- function(input, output, session) {
           # Run a chunk of training
           ProbStates <<- RunTicTacToeComputerVSComputer(States,StopStates,LinkedStates,ProbStates,Temperature)
           Temperature <<- Temperature + TemperatureDecreaseStep
-          val$check_prob[val$training_step] <- ProbStates[[1]][[1]][[1]]
+          val$check_prob_1[val$training_step] <- ProbStates[[1]][[1]][[1]]
+          val$check_prob_2[val$training_step] <- ProbStates[[1]][[1]][[2]]
+          val$check_prob_3[val$training_step] <- ProbStates[[1]][[1]][[3]]
           val$training_step <- val$training_step + 1
         }
         if(val$training_step %% floor(LengthOfTraining/2) == 0){
@@ -218,14 +224,20 @@ server <- function(input, output, session) {
   #   }
   # })
 
-  output$TTJLevel <- renderText(paste0("TicTacJoe is a ", TTJLevels[[val$level_idx]], "  prob of corner: ", ProbStates[[1]][[1]][[1]]))
+  output$TTJLevel <- renderText(paste0("TicTacJoe is a ", TTJLevels[[val$level_idx]]))
 
-  output$move_prob <- renderPlot({
-    plot(val$check_prob, type='l', xlim=c(0,LengthOfTraining), ylim=c(0,1))
-    if(val$training_step > 1){
-      points(val$training_step, tail(val$check_prob, n=1), col="purple", cex=3, pch=19)
-    }
-  })
+  output$move_prob_1 <- renderPlot({
+    plot(val$check_prob_1, type='l', xlim=c(0,LengthOfTraining), ylim=c(0,1), xlab="", ylab="Probability", main="Pick corner")
+    points(val$training_step, tail(val$check_prob_1, n=1), col=NiceColorPlayerOne, cex=3, pch=19)
+  }, width = 500)
+  output$move_prob_2 <- renderPlot({
+    plot(val$check_prob_2, type='l', xlim=c(0,LengthOfTraining), ylim=c(0,1), xlab="Games trained", ylab="", main="Pick side")
+    points(val$training_step, tail(val$check_prob_2, n=1), col=NiceColorPlayerOne, cex=3, pch=19)
+  }, width = 500)
+  output$move_prob_3 <- renderPlot({
+    plot(val$check_prob_3, type='l', xlim=c(0,LengthOfTraining), ylim=c(0,1), xlab="", ylab="", main="Pick center")
+    points(val$training_step, tail(val$check_prob_3, n=1), col=NiceColorPlayerOne, cex=3, pch=19)
+  }, width = 500)
   
   # observe({
   #   if(val$training_step > 1){

@@ -14,6 +14,10 @@ semanticPage(
   tags$br(),
   tags$br(),
   
+  div(class = "ui grid centered",
+      textOutput("TTJLevel")
+  ),  
+  
   div(class = "ui grid centered two column",
       action_button(input_id = "train_more", label = "Let TicTacJoe train"),
       action_button(input_id = "flush_training", label = "Flush TicTacJoe's skills")
@@ -43,13 +47,14 @@ semanticPage(
   
   tags$br(),
   tags$br(),
-  
-  div(class = "ui grid centered",
-      textOutput("TTJLevel")
-  ),    
+    
 
   div(class = "ui grid centered",
-      plotOutput("move_prob")
+      split_layout(
+        plotOutput("move_prob_1"),
+        plotOutput("move_prob_2"),
+        plotOutput("move_prob_3")
+      )
   ),    
   
   # div(class = "ui grid centered three column",
