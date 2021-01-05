@@ -11,7 +11,7 @@ alfa_one = 0.5 # Relative convergence of probabilities of top level
 alfa_two = 0.6 # Relative convergence of probabilities of bottom level
 alfa = seq(alfa_one,alfa_two,(alfa_two-alfa_one)/N)
 
-LengthOfTraining = 100000   # Total number of games until expert
+LengthOfTraining = 10000 #100000   # Total number of games until expert
 InitialTemperature = 0.9
 FinalTemperature = 0.03
 TemperatureDecreaseStep = (FinalTemperature-InitialTemperature)/LengthOfTraining   # How much to decrease in one step of training
@@ -125,4 +125,4 @@ RunTicTacToeComputerVSComputer = function(States,StopStates,LinkedStates,ProbSta
 }
 
 # For plotting
-steps_in_plot_chunk = 500
+steps_in_plot_chunk = 1000

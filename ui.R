@@ -42,6 +42,7 @@ semanticPage(
   ),
   
   tags$br(),
+  tags$br(),
   
   div(class = "ui grid centered",
       textOutput("TTJLevel")
