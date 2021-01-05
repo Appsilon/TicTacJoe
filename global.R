@@ -125,4 +125,4 @@ RunTicTacToeComputerVSComputer = function(States,StopStates,LinkedStates,ProbSta
 }
 
 # For plotting
-check_prob = 0
+steps_in_plot_chunk = 500
