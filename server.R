@@ -6,106 +6,71 @@ server <- function(input, output, session) {
     training_step = 0,
     check_prob_1 = 0.33,
     check_prob_2 = 0.33,
-    check_prob_3 = 0.33
+    check_prob_3 = 0.33,
+    
+    who_starts = NULL
   )
-  
-  # reac <- reactiveValues(
-  #   # Board state
-  #   tl = NULL,
-  #   tm = NULL,
-  #   tr = NULL,
-  #   ml = NULL,
-  #   mm = NULL,
-  #   mr = NULL,
-  #   bl = NULL,
-  #   bm = NULL,
-  #   br = NULL
-  #   
-    # is it TicTacJoes move
-    # MoveTTJ = NULL
-  # )
-  
   
   ##########################
   # Play a game
   ##########################
-  # observeEvent(input$play_game, {
-  #   #GameIsOn = TRUE
-  #   
-  #   # Select who starts (for now random)
-  #   HumanPlayer <<- sample(2,1)
-  #   ComputerPlayer <<- 3 - HumanPlayer
-  #   
-  #   # Setup parameters
-  #   N2 <<- length(ProbStates)-1
-  #   Path_Run <<- 1
-  #   Selected_Moves <<- runif(N,0,1)
-  #   Probabilities <<- cumsum(ProbStates[[1]][[1]])
-  #   current_boardstate <<- rep(0,N)
-  #   unique_current_boardstate <<- current_boardstate
-  #   i <<- 2 # helps determine whose move it is
-  #   if (((i %% 2) + 1) == HumanPlayer) {
-  #     # The User makes a move
-  #   } else {
-  #     # TicTacJoe moves
-  #     reac$MoveTTJ = TRUE
-  #   }
-  # })
-  # 
-  # 
-  # 
-  # observeEvent(reac$MoveTTJ, {
-  #   if(reac$MoveTTJ){
-  #     # Make the move in the back-end
-  #     
-  #     # Adjust display of the move
-  #     runjs(glue('document.getElementById("top_middle").style.backgroundColor = "{NiceColorPlayerOne}";'))
-  #     update_action_button(session, input_id = "top_middle", icon = icon("circle outline"))
-  #     
-  #     # Store for display
-  #     reac$tm <- "User"
-  #     i <<- i + 1 # next move
-  #     # Trigger TicTacJoes move
-  #     reac$MoveTTJ = TRUE
-  #   }
-  # })
 
-  # observe({
-  #   current_state <- purrr::map(c("tl", "tm", "tb"), ~{
-  #     sel_butt[[.x]]
-  #   })
-  #   names(current_state) <- c("tl", "tm", "tb")
-  #   
-  #   print(current_state)
-  #   
-  #   runjs(glue('document.getElementById("top_left").style.backgroundColor = "{NiceColorPlayerOne}";'))
-  #   update_action_button(session, input_id = "top_left", icon = icon("circle outline"))
-  #   
-  # })
-
+  # Who starts modal
+  ##########################
+  observeEvent(input$user_starts, {
+    if (input$user_starts > 0 ) {
+      val$who_starts = "user"
+      removeModal()
+    }
+  })
+  observeEvent(input$TTJ_starts, {
+    if (input$TTJ_starts > 0 ) {
+      val$who_starts = "TTJ"
+      removeModal()
+    }
+  })
+  observeEvent(input$random_starts, {
+    if (input$random_starts > 0 ) {
+      val$who_starts = sample(c("user", "TTJ"), 1)
+      removeModal()
+    }
+  })
+  observeEvent(input$cancel_choice,{
+    removeModal()
+  })
   
-  # observeEvent(input$top_left, {
-  #   if(is.null(reac$tl) && ((i %% 2) + 1) == HumanPlayer){
-  #     UpdateButton("top_left", isHuman=TRUE)
-  #     reac$tl <- "User"
-  #     i <<- i + 1 # next move
-  #   }
-  # })
-  # observeEvent(input$top_middle, {
-  #   if(is.null(reac$tm) && ((i %% 2) + 1) == HumanPlayer){
-  #     # Adjust display of the move
-  #     runjs(glue('document.getElementById("top_middle").style.backgroundColor = "{NiceColorPlayerOne}";'))
-  #     update_action_button(session, input_id = "top_middle", icon = icon("circle outline"))
-  #     # Make the move in the back-end
-  #     
-  #     # Store for display
-  #     reac$tm <- "User"
-  #     i <<- i + 1 # next move
-  #     # Trigger TicTacJoes move
-  #     reac$MoveTTJ = TRUE
-  #     
-  #   }
-  # })
+  # Game modal
+  ##########################
+  observeEvent(val$who_starts, {
+    create_modal(modal(
+      id = "game_modal",
+      header = list(style = "background: lightgray", "Let's play a game!"),
+      # content = list(style = "background: lightblue", `data-custom` = "value", "This is an important message!"),
+      footer = div(action_button(input_id = "cancel_game", label = "End game")),
+      div(class = "ui grid centered three column",
+          action_button(input_id = "top_left", label = ""),
+          action_button(input_id = "top_middle", label = ""),
+          action_button(input_id = "top_right", label = ""),
+      ),
+      div(class = "ui grid centered three column",
+          action_button(input_id = "middle_left", label = ""),
+          action_button(input_id = "middle_middle", label = ""),
+          action_button(input_id = "middle_right", label = ""),
+      ),
+      div(class = "ui grid centered three column",
+          action_button(input_id = "bottom_left", label = ""),
+          action_button(input_id = "bottom_middle", label = ""),
+          action_button(input_id = "bottom_right", label = ""),
+      )
+    ))
+    print(val$who_starts)
+    val$who_starts = NULL
+  }, ignoreInit = TRUE)
+  
+  observeEvent(input$cancel_game,{
+    removeModal()
+    # TODO reset the state of the game
+  })
   
   observeEvent(input$top_left,{
     UpdateButton(WhichButton="top_left", isHuman=TRUE, session)
@@ -218,5 +183,4 @@ server <- function(input, output, session) {
     points(val$training_step, tail(val$check_prob_3, n=1), col=NiceColorPlayerOne, cex=3, pch=19)
   }, width = 500)
   
- 
 }
