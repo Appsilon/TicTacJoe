@@ -177,9 +177,9 @@ server <- function(input, output, session) {
     val$run_training = TRUE
   })
   observe({
-    isolate({
+    if(val$run_training == TRUE){
+      isolate({
       # This block is scheduled many times - should run steps_in_plot_chunk many steps of training
-      if(val$run_training == TRUE){
         for (i in 1:steps_in_plot_chunk) {
           # Run a chunk of training
           ProbStates <<- RunTicTacToeComputerVSComputer(States,StopStates,LinkedStates,ProbStates,Temperature)
@@ -196,34 +196,13 @@ server <- function(input, output, session) {
           print(ProbStates[[1]][[1]])
           print(Temperature)
         }
+      })
+      if(isolate(val$training_step) < LengthOfTraining){
+        invalidateLater(0, session)
       }
-    })
-    if (isolate(val$training_step) < LengthOfTraining){
-      invalidateLater(0, session)
     }
   })
-  # observeEvent(input$train_more,{
-  #   isolate({
-  #     # This block is scheduled many times - should run steps_in_plot_chunk many steps of training
-  #     for (i in 1:steps_in_plot_chunk) {
-  #       # Run a chunk of training
-  #       ProbStates <<- RunTicTacToeComputerVSComputer(States,StopStates,LinkedStates,ProbStates,Temperature)
-  #       Temperature <<- Temperature + TemperatureDecreaseStep
-  #       val$check_prob[val$training_step + floor(LengthOfTraining/2)*(val$level_idx - 1)] <- ProbStates[[1]][[1]][[1]]
-  #       val$training_step <- val$training_step + 1
-  #     }
-  #     if(val$training_step == floor(LengthOfTraining/2)){
-  #       # At end of training level, update the level
-  #       val$level_idx = val$level_idx + 1
-  #       print(ProbStates[[1]][[1]])
-  #       print(Temperature)
-  #     }
-  #   })
-  #   if (isolate(val$training_step) < floor(LengthOfTraining/2)){
-  #     invalidateLater(0, session)
-  #   }
-  # })
-
+ 
   output$TTJLevel <- renderText(paste("TicTacJoe is a", "<b>", TTJLevels[[val$level_idx]], "</b>"))
 
   output$move_prob_1 <- renderPlot({
@@ -239,13 +218,5 @@ server <- function(input, output, session) {
     points(val$training_step, tail(val$check_prob_3, n=1), col=NiceColorPlayerOne, cex=3, pch=19)
   }, width = 500)
   
-  # observe({
-  #   if(val$training_step > 1){
-  #     output$move_prob <- renderPlot(plot(check_prob, type='l'))#[seq(1, length(check_prob), 200)], type='l'))     
-  #     # output$move_prob_1 <- renderPlot(plot(check_prob[1], type='l'))#[seq(1, length(check_prob), 200)], type='l'))     
-  #     # output$move_prob_2 <- renderPlot(plot(check_prob[2], type='l'))#[seq(1, length(check_prob), 200)], type='l'))     
-  #     # output$move_prob_3 <- renderPlot(plot(check_prob[3], type='l'))#[seq(1, length(check_prob), 200)], type='l'))     
-  #   }
-  # })
-  # 
+ 
 }

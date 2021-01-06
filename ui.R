@@ -25,10 +25,22 @@ semanticPage(
   ),
   
   modal(
-    id = "game_modal",
+    id = "whostarts_modal",
     target = "play_game",
+    header = "Choose who starts",
+    footer = div(action_button(input_id = "cancel_choice", label = "Cancel")),
+    div(class = "ui grid centered three column",
+        action_button(input_id = "user_starts", label = "I want to start"),
+        action_button(input_id = "TTJ_starts", label = "TicTacJoe starts"),
+        action_button(input_id = "random_starts", label = "Random option"),
+    )
+  ),
+  
+  modal(
+    id = "game_modal",
+    target = "start_game",
     header = "Let's play a game!",
-    footer = div(class = "ui button gray", "End game"),
+    footer = div(action_button(input_id = "cancel_game", label = "End game")),
     div(class = "ui grid centered three column",
         action_button(input_id = "top_left", label = ""),
         action_button(input_id = "top_middle", label = ""),
