@@ -8,7 +8,9 @@ server <- function(input, output, session) {
     check_prob_2 = 0.33,
     check_prob_3 = 0.33,
     
-    who_starts = NULL
+    who_starts = NULL,
+    users_move = NULL,
+    whose_turn = ""
   )
   
   ##########################
@@ -20,18 +22,21 @@ server <- function(input, output, session) {
   observeEvent(input$user_starts, {
     if (input$user_starts > 0 ) {
       val$who_starts = "user"
+      val$whose_turn = val$who_starts
       removeModal()
     }
   })
   observeEvent(input$TTJ_starts, {
     if (input$TTJ_starts > 0 ) {
       val$who_starts = "TTJ"
+      val$whose_turn = val$who_starts
       removeModal()
     }
   })
   observeEvent(input$random_starts, {
     if (input$random_starts > 0 ) {
       val$who_starts = sample(c("user", "TTJ"), 1)
+      val$whose_turn = val$who_starts
       removeModal()
     }
   })
@@ -63,7 +68,6 @@ server <- function(input, output, session) {
           action_button(input_id = "bottom_right", label = ""),
       )
     ))
-    print(val$who_starts)
     val$who_starts = NULL
   }, ignoreInit = TRUE)
   
@@ -73,43 +77,58 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$top_left,{
-    UpdateButton(WhichButton="top_left", isHuman=TRUE, session)
-    # val$player_chose = "top_left"
+    val$users_move = "top_left"
   })
   observeEvent(input$top_middle,{
-    UpdateButton(WhichButton="top_middle", isHuman=TRUE, session)
+    val$users_move = "top_middle"
   })
   observeEvent(input$top_right,{
-    UpdateButton(WhichButton="top_right", isHuman=TRUE, session)
+    val$users_move = "top_right"
   })
   observeEvent(input$middle_left,{
-    UpdateButton(WhichButton="middle_left", isHuman=TRUE, session)
+    val$users_move = "middle_left"
   })
   observeEvent(input$middle_middle,{
-    UpdateButton(WhichButton="middle_middle", isHuman=TRUE, session)
+    val$users_move = "middle_middle"
   })
   observeEvent(input$middle_right,{
-    UpdateButton(WhichButton="middle_right", isHuman=TRUE, session)
+    val$users_move = "middle_right"
   })
   observeEvent(input$bottom_left,{
-    UpdateButton(WhichButton="bottom_left", isHuman=TRUE, session)
+    val$users_move = "bottom_left"
   })
   observeEvent(input$bottom_middle,{
-    UpdateButton(WhichButton="bottom_middle", isHuman=TRUE, session)
+    val$users_move = "bottom_middle"
   })
   observeEvent(input$bottom_right,{
-    UpdateButton(WhichButton="bottom_right", isHuman=TRUE, session)
+    val$users_move = "bottom_right"
   })
 
-  observe({
-    delay(5000, {
-      UpdateButton(WhichButton="top_left", isHuman=FALSE, session)
-      # reac$tl <- "TTJ"
-      delay(5000, {
-        UpdateButton(WhichButton="bottom_left", isHuman=FALSE, session)
-        # reac$bl <- "TTJ"
-      })
-    })
+  # observe({
+  #   delay(5000, {
+  #     UpdateButton(WhichButton="top_left", isHuman=FALSE, session)
+  #     # reac$tl <- "TTJ"
+  #     delay(5000, {
+  #       UpdateButton(WhichButton="bottom_left", isHuman=FALSE, session)
+  #       # reac$bl <- "TTJ"
+  #     })
+  #   })
+  # })
+  
+  observeEvent(val$users_move, {
+    if(val$whose_turn == "user"){
+      # Make users move as stored in val$users_move
+      isolate(UpdateButton(WhichButton=val$users_move, isHuman=TRUE, session))
+      # If game finished display message and close
+      
+      val$whose_turn = "TTJ"
+    } else if(val$whose_turn == "TTJ"){
+      # Make users move as stored in val$users_move
+      isolate(UpdateButton(WhichButton=val$users_move, isHuman=FALSE, session))
+      # If game finished display message and close
+      
+      val$whose_turn = "user"
+    }
   })
   
   

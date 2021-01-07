@@ -1,5 +1,7 @@
 # TicTacJoe
-This repo holds a demo app with TicTacJoe - a reinforcement learning example for the game of Tic Tac Toe
+This repo holds a demo app with TicTacJoe - a reinforcement learning example for the game of Tic Tac Toe.
+
+The first version of the code for the game (with some very basic UI), was developed at Itility, by Donald van den Hoogenband and Jędrzej Świeżewski.
 
 # TODO
 - **DONE** "End game" button should close modal with game
@@ -13,3 +15,4 @@ This repo holds a demo app with TicTacJoe - a reinforcement learning example for
 - Display probabilities of a move
 - **DONE** Display saturation for a given move (?)
 - Rearrange UI nicely
+- Reset the state of the game board when the modal with it is closed
