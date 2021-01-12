@@ -16,3 +16,4 @@ The first version of the code for the game (with some very basic UI), was develo
 - **DONE** Display saturation for a given move (?)
 - Rearrange UI nicely
 - Reset the state of the game board when the modal with it is closed
+- prevent the "first" button to be "hovered-on" when loading a page (main and the game as well)
