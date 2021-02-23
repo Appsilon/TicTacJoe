@@ -68,13 +68,6 @@ semanticPage(
         plotOutput("move_prob_2"),
         plotOutput("move_prob_3")
       )
-  ),    
-  
-  # div(class = "ui grid centered three column",
-  #     plotOutput("move_prob_1"),
-  #     plotOutput("move_prob_2"),
-  #     plotOutput("move_prob_3")
-  # ),
-  
+  ),
   
 )

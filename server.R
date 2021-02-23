@@ -10,7 +10,13 @@ server <- function(input, output, session) {
     
     who_starts = NULL,
     users_move = NULL,
-    whose_turn = ""
+    whose_turn = "",
+    
+    current_boardstate = rep(0,N),
+    unique_current_boardstate = rep(0,N),
+    PathRun = 1,
+    SelectedMoves = runif(N,0,1),
+    move_nr = 1 # move_nr = i-1, since i=2 initially
   )
   
   ##########################
@@ -77,57 +83,135 @@ server <- function(input, output, session) {
   })
   
   observeEvent(input$top_left,{
-    val$users_move = "top_left"
+    if(val$whose_turn == "user"){
+      val$users_move = 1 
+      val$pressed_button = "top_left"
+    }
   })
   observeEvent(input$top_middle,{
-    val$users_move = "top_middle"
+    if(val$whose_turn == "user"){
+      val$users_move = 2 
+      val$pressed_button = "top_middle"
+    }
   })
   observeEvent(input$top_right,{
-    val$users_move = "top_right"
+    if(val$whose_turn == "user"){
+      val$users_move = 3 
+      val$pressed_button = "top_right"
+    }
   })
   observeEvent(input$middle_left,{
-    val$users_move = "middle_left"
+    if(val$whose_turn == "user"){
+      val$users_move = 4 
+      val$pressed_button = "middle_left"
+    }
   })
   observeEvent(input$middle_middle,{
-    val$users_move = "middle_middle"
+    if(val$whose_turn == "user"){
+      val$users_move = 5 
+      val$pressed_button = "middle_middle"
+    }
   })
   observeEvent(input$middle_right,{
-    val$users_move = "middle_right"
+    if(val$whose_turn == "user"){
+      val$users_move = 6 
+      val$pressed_button = "middle_right"
+    }
   })
   observeEvent(input$bottom_left,{
-    val$users_move = "bottom_left"
+    if(val$whose_turn == "user"){
+      val$users_move = 7 
+      val$pressed_button = "bottom_left"
+    }
   })
   observeEvent(input$bottom_middle,{
-    val$users_move = "bottom_middle"
+    if(val$whose_turn == "user"){
+      val$users_move = 8 
+      val$pressed_button = "bottom_middle"
+    }
   })
   observeEvent(input$bottom_right,{
-    val$users_move = "bottom_right"
+    if(val$whose_turn == "user"){
+      val$users_move = 9 
+      val$pressed_button = "bottom_right"
+    }
   })
-
-  # observe({
-  #   delay(5000, {
-  #     UpdateButton(WhichButton="top_left", isHuman=FALSE, session)
-  #     # reac$tl <- "TTJ"
-  #     delay(5000, {
-  #       UpdateButton(WhichButton="bottom_left", isHuman=FALSE, session)
-  #       # reac$bl <- "TTJ"
-  #     })
-  #   })
-  # })
+  
+  # Users move
+  ##########################
   
   observeEvent(val$users_move, {
     if(val$whose_turn == "user"){
-      # Make users move as stored in val$users_move
-      isolate(UpdateButton(WhichButton=val$users_move, isHuman=TRUE, session))
-      # If game finished display message and close
+      # Update board tile with the users move
+      UpdateButton(WhichButton=val$pressed_button, isHuman=TRUE, session)
       
+      # Make the users move in the backend
+      # TODO finish
+      
+      ## Denote move in current_boardstate
+      val$current_boardstate[val$users_move] = UserCode
+      print(paste("val$current_boardstate:", paste(val$current_boardstate, collapse = " ")))
+      
+      ## Update PathRun
+      unique_current_boardstate = c(GetEquivalentStates(val$current_boardstate)[8,])
+      print(paste("unique_current_boardstate:", paste(unique_current_boardstate, collapse = " ")))
+      for (j in 1:length(LinkedStates[[val$move_nr]][[val$PathRun[val$move_nr]]])) {
+        if(all(States[[val$move_nr+1]][[LinkedStates[[val$move_nr]][[val$PathRun[val$move_nr]]][j]]] == unique_current_boardstate)) {
+          val$PathRun[val$move_nr+1] = LinkedStates[[val$move_nr]][[val$PathRun[val$move_nr]]][j]
+          break
+        }
+      }
+      print(paste("val$PathRun:", paste(val$PathRun, collapse = " ")))
+      
+      # Check if game ended
+      # TODO    
+      
+      # Display who won
+      # TODO
+      
+      # Disable further moves
+      # TODO #seems to be done -> only one move per turn is possible
+      
+      # TTJs turn
       val$whose_turn = "TTJ"
-    } else if(val$whose_turn == "TTJ"){
-      # Make users move as stored in val$users_move
-      isolate(UpdateButton(WhichButton=val$users_move, isHuman=FALSE, session))
-      # If game finished display message and close
+      val$move_nr = val$move_nr + 1
+    }
+  })
+  
+  # TTJs move
+  ##########################
+  
+  observeEvent(val$whose_turn, {
+    if(val$whose_turn == "TTJ") {
+      # Make TTJs move in the backend
+      # TODO - finish - When user starts it seems to work. Something goes wrong when TTJ starts. Board state gets a number 1 when TTJ starts and moves - should get a 2
       
+      print(paste("Level of confidence:", round(max(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]])*100, 0),"%"))
+      print(paste("All probabilities are:", paste(round(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]], 3), collapse=", ")))
+      Sys.sleep(2)
+      Probabilities = cumsum(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]])
+      val$PathRun[val$move_nr+1] = LinkedStates[[val$move_nr]][[val$PathRun[val$move_nr]]][which(val$SelectedMoves[[val$move_nr]] < Probabilities)[1]]
+      unique_current_boardstate = States[[val$move_nr+1]][[val$PathRun[[val$move_nr+1]]]]
+      equivalent_states = GetEquivalentStates(unique_current_boardstate)
+      previous_boardstate = val$current_boardstate
+      val$current_boardstate = equivalent_states[which(rowSums(equivalent_states == t(matrix(rep(val$current_boardstate,8),nrow=N,ncol=8)))==8)[1],]
+      print(paste("val$current_boardstate:", paste(val$current_boardstate, collapse = " "), "(TTJ moved)"))
+      TTJs_choice = which(previous_boardstate < val$current_boardstate)
+      print(paste("TTJ made the move:", TTJs_choice, "so", BoardTileNames[[TTJs_choice]]))
+      
+      # Update board tile with TTJs move
+      # TODO
+      UpdateButton(WhichButton=BoardTileNames[[TTJs_choice]], isHuman=FALSE, session)
+      
+      # Check if game ended
+      # TODO    
+      
+      # Display who won
+      # TODO
+      
+      # users turn
       val$whose_turn = "user"
+      val$move_nr = val$move_nr + 1
     }
   })
   
@@ -191,15 +275,15 @@ server <- function(input, output, session) {
 
   output$move_prob_1 <- renderPlot({
     plot(val$check_prob_1, type='l', xlim=c(0,LengthOfTraining), ylim=c(0,1), xlab="", ylab="Probability", main="Pick corner")
-    points(val$training_step, tail(val$check_prob_1, n=1), col=NiceColorPlayerOne, cex=3, pch=19)
+    points(val$training_step, tail(val$check_prob_1, n=1), col=NiceColorTTJ, cex=3, pch=19)
   }, width = 500)
   output$move_prob_2 <- renderPlot({
     plot(val$check_prob_2, type='l', xlim=c(0,LengthOfTraining), ylim=c(0,1), xlab="Games trained", ylab="", main="Pick side")
-    points(val$training_step, tail(val$check_prob_2, n=1), col=NiceColorPlayerOne, cex=3, pch=19)
+    points(val$training_step, tail(val$check_prob_2, n=1), col=NiceColorTTJ, cex=3, pch=19)
   }, width = 500)
   output$move_prob_3 <- renderPlot({
     plot(val$check_prob_3, type='l', xlim=c(0,LengthOfTraining), ylim=c(0,1), xlab="", ylab="", main="Pick center")
-    points(val$training_step, tail(val$check_prob_3, n=1), col=NiceColorPlayerOne, cex=3, pch=19)
+    points(val$training_step, tail(val$check_prob_3, n=1), col=NiceColorTTJ, cex=3, pch=19)
   }, width = 500)
   
 }

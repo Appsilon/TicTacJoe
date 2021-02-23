@@ -20,7 +20,7 @@ NiceColorPlayerTwo = rgb(69, 177, 239, max=255) # nice shade of blue
 
 
 # Load precomputed game setup
-PrecomputedFilesLocation = "../precomputed_state"
+PrecomputedFilesLocation = "precomputed_state"
 load(file=file.path(PrecomputedFilesLocation, "States.RData"))
 load(file=file.path(PrecomputedFilesLocation, "StopStates.RData"))
 load(file=file.path(PrecomputedFilesLocation, "LinkedStates.RData"))
@@ -328,7 +328,7 @@ DisplayFace = function(GameLevel) {  # GameLevel = 1 -> Noob, 2 -> Medium, 3 -> 
 # Start the adventure mode!
 StartAdventure = function(){
   GameIsOn = TRUE
-  x11(width = 145,height = 100,xpos=0,ypos=50)
+  x11() # x11(width = 145,height = 100,xpos=0,ypos=50)
   # plot title
   plot(c(0.00,0.45),c(1,1),cex=1,lwd=1,type="l",xlim=c(0,1),ylim=c(0,1),xaxt='n', yaxt='n', ann=F)
   lines(c(0.55,1   ),c(1,1),cex=1,lwd=1,type="l",xlim=c(0,1),ylim=c(0,1),xaxt='n', yaxt='n', ann=F)

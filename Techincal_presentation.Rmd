@@ -1,0 +1,119 @@
+---
+title: "Inside TicTacJoe"
+output: html_notebook
+---
+Load the needed objects, representing the game
+```{r}
+# Load precomputed game setup
+PrecomputedFilesLocation = "precomputed_state"
+load(file=file.path(PrecomputedFilesLocation, "States.RData"))
+load(file=file.path(PrecomputedFilesLocation, "StopStates.RData"))
+load(file=file.path(PrecomputedFilesLocation, "LinkedStates.RData"))
+load(file=file.path(PrecomputedFilesLocation, "ProbStates.RData"))
+```
+
+## States
+
+`States` stores all possible board configurations up to symmetry. There are 9 moves at most, so together with initial empty board, that gives 10 levels of states.
+```{r}
+length(States)
+```
+The first level is an empty board
+```{r}
+States[[1]]
+```
+The first move can be placed in only 3 places (corner, middle of border, center of board), when reduced with respect to symmetry
+```{r}
+States[[2]]
+```
+Note, that the logic here is that the 9 values store positions from top-left corner, top-middle, top-right corner, middle-left...
+
+The moves of the second player are denoted with a `2`, hence
+```{r}
+States[[7]][[56]]
+```
+To visualize what board states is coded by this state, let us prepare a function
+```{r}
+print_board = function(state) {
+  print(t(matrix(state, sqrt(length(state)))))
+}
+
+print_board(States[[7]][[56]])
+```
+
+The number of possible board configurations (reduced with symmetry) is
+```{r}
+for(i in 1:10){print(length(States[[i]]))}
+```
+
+## ProbStates
+
+`ProbStates` holds the probabilities with which TicTacJoe makes a given move. This is TicTacJoe's understanding of the game or its brain. `ProbStates` are initialized with uniform distribuitions, meaning in each board configuration, all the moves are equally probable, e.g., all three first moves are equally likely
+```{r}
+ProbStates[[1]]
+```
+While there is a level in `ProbStates` for every level in `States`,
+```{r}
+for(i in 1:10){print(length(ProbStates[[i]]))}
+```
+The length of levels vectors on a level depend on how many options there are.
+
+As the training of TicTacJoe progresses, the ProbStates are updated, eventually saturating on probabilities being close to one-hot vectors, e.g., `[0, 0, 1, 0]`.
+
+## StopStates
+
+The `StopStates` stores information about which player won in a given state (or if there is no winner). It has the same structure as `States`
+```{r}
+for(i in 1:10){print(length(StopStates[[i]]))}
+```
+
+Let us verify if the state we used above is indeed marked as a win for player number `2`
+```{r}
+print_board(States[[7]][[56]])
+
+print(paste("Stop state for this state of board is:", StopStates[[7]][[56]]))
+```
+
+## LinkedStates
+
+`LinkedStates` holds information of the indexes of the states following a given state under a choice coded by `ProbStates`. They have the same level structure as `States`
+```{r}
+for(i in 1:10){print(length(LinkedStates[[i]]))}
+```
+
+To see how it works, let us take the state of the board considered above
+```{r}
+state_level <- 7
+board_config <- 56
+
+print_board(States[[state_level]][[board_config]])
+```
+
+Let us consider state `States[[6]][[25]]`
+```{r}
+print_board(States[[6]][[25]])
+```
+It is now a move of player `2` and they have 4 options (no symmetries apply), hence
+```{r}
+length(ProbStates[[6]][[25]]) == length(LinkedStates[[6]][[25]])
+length(ProbStates[[6]][[25]]) == 4
+```
+The four possible next board states are
+```{r}
+for(i in 1:length(LinkedStates[[6]][[25]])) {
+  print_board(States[[7]][[LinkedStates[[6]][[25]][[i]]]])
+}
+```
+Note, that some of the boards may be rotated or flipped.
+```{r}
+# LinkedStates[[6]][[25]]
+States[[7]][[41]]
+```
+
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Cmd+Option+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Cmd+Shift+K* to preview the HTML file). 
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+

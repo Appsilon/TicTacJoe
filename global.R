@@ -18,14 +18,17 @@ TemperatureDecreaseStep = (FinalTemperature-InitialTemperature)/LengthOfTraining
 Temperature = InitialTemperature
 
 # For plotting chunks
-steps_in_plot_chunk = 100 #5000
+steps_in_plot_chunk = 100 #500
 
-# Human player
-NiceColorPlayerOne = rgb(69, 177, 239, max=255) # nice shade of blue
-NiceIconPlayerOne = icon("close icon")
-# TicTacJoe player
-NiceColorPlayerTwo = rgb(165, 81, 184, max=255)  # nice shade of purple
-NiceIconPlayerTwo = icon("circle outline")
+# User
+NiceColorUser = rgb(69, 177, 239, max=255) # nice shade of blue
+NiceIconUser = icon("close icon")
+UserCode = 1
+
+# TTJ
+NiceColorTTJ = rgb(165, 81, 184, max=255)  # nice shade of purple
+NiceIconTTJ = icon("circle outline")
+TTJCode = 2
 
 # Load precomputed game setup
 PrecomputedFilesLocation = "precomputed_state"
@@ -34,28 +37,34 @@ load(file=file.path(PrecomputedFilesLocation, "StopStates.RData"))
 load(file=file.path(PrecomputedFilesLocation, "LinkedStates.RData"))
 load(file=file.path(PrecomputedFilesLocation, "ProbStates.RData"))
 
-RandomProbStates = ProbStates  # this stores the untrained TicTacJoe
+RandomProbStates = ProbStates  # this stores the untrained TTJ
 
 # Update button after click
 UpdateButton = function(WhichButton, isHuman, session) {
   # Button is from the top_left, top_middle, top_right, middle_left, ... convention
-  # isHuman is TRUE if it is the user, FALSE if it is the TicTacJoe
+  # isHuman is TRUE if it is the user, FALSE if it is the TTJ
   if(isHuman){
     shinyjs::disable(WhichButton)
     # modify to keep the color from getting greyed
-    runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{NiceColorPlayerOne}";'))
-    update_action_button(session, input_id = WhichButton, icon = NiceIconPlayerOne)
+    runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{NiceColorUser}";'))
+    update_action_button(session, input_id = WhichButton, icon = NiceIconUser)
     } else {
     shinyjs::disable(WhichButton)
     # modify to keep the color from getting greyed
-    runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{NiceColorPlayerTwo}";'))
-    update_action_button(session, input_id = WhichButton, icon = NiceIconPlayerTwo)
+    runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{NiceColorTTJ}";'))
+    update_action_button(session, input_id = WhichButton, icon = NiceIconTTJ)
   }
   return()
 }
 
 # TicTacJoe difficulty levels
 TTJLevels = c("Noob", "Young Padawan", "Guru")
+
+# Board tile names
+BoardTileNames = c("top_left", "top_middle", "top_right",
+                   "middle_left", "middle_middle", "middle_right",
+                   "bottom_left", "bottom_middle", "bottom_right"
+                   )
 
 # Define Normalization function
 Normalize = function(Vector) {
@@ -93,7 +102,7 @@ UpdateProbabilitiesUsingPath = function(path, StopStates, LinkedStates, ProbStat
       if (path_result==2) {
         adj_prob[index_prob_changed] = alfa[k]
       } else if(path_result==0) {
-        adj_prob[index_prob_changed] = alfa[k]/10    # player 2 gets half a reward also for drawing
+        adj_prob[index_prob_changed] = alfa[k]/10    # second player gets partial reward also for drawing
       } else if(path_result==1) {
         adj_prob[index_prob_changed] = -alfa[k]
       }
@@ -124,4 +133,20 @@ RunTicTacToeComputerVSComputer = function(States,StopStates,LinkedStates,ProbSta
   }
   ProbStates = UpdateProbabilitiesUsingPath(Path_Run,StopStates,LinkedStates,ProbStates,0,Temperature)
   return(ProbStates)
+}
+
+# Find equivalent states of the board - from a current_boardstate, e.g., 2 1 0 0 1 2 2 1 1, produce a collection of equivalent states.
+# A state is equivalent if it can be reached by a rotation or flip.
+# There are always 8 equivalent states, some may be identical
+GetEquivalentStates = function(current_boardstate) {
+  equivalent_states = matrix(0,nrow=8,ncol=N)
+  equivalent_states[1,1:N] = current_boardstate
+  equivalent_states[2,1:N] = c(apply(t(matrix(equivalent_states[1,1:N],nrow=n,ncol=n)), 2, rev))
+  equivalent_states[3,1:N] = c(apply(t(matrix(equivalent_states[2,1:N],nrow=n,ncol=n)), 2, rev))
+  equivalent_states[4,1:N] = c(apply(t(matrix(equivalent_states[3,1:N],nrow=n,ncol=n)), 2, rev))
+  equivalent_states[5,1:N] = c(apply(matrix(equivalent_states[1,1:N],nrow=n,ncol=n), 2, rev))
+  equivalent_states[6,1:N] = c(apply(matrix(equivalent_states[2,1:N],nrow=n,ncol=n), 2, rev))
+  equivalent_states[7,1:N] = c(apply(matrix(equivalent_states[3,1:N],nrow=n,ncol=n), 2, rev))
+  equivalent_states[8,1:N] = c(apply(matrix(equivalent_states[4,1:N],nrow=n,ncol=n), 2, rev))
+  return(equivalent_states[do.call(order, as.data.frame(equivalent_states)),])
 }
