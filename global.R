@@ -148,3 +148,36 @@ GetEquivalentStates = function(current_boardstate) {
   equivalent_states[8,1:N] = c(apply(matrix(equivalent_states[4,1:N],nrow=n,ncol=n), 2, rev))
   return(equivalent_states[do.call(order, as.data.frame(equivalent_states)),])
 }
+
+# Check if someone won the game (returns: "user", "TTJ", "draw", or NULL in case no winner yet)
+CheckIfWon = function(StopStates, PathRun, move_nr, user_code) {
+  print(paste("move_nr:", move_nr))
+  stop_state = StopStates[[move_nr+1]][[PathRun[move_nr+1]]]
+  print(paste("stop_state:", stop_state))
+  if(stop_state == 1) {
+    # First player won
+    if(user_code == 1) {
+      winner = "user"
+    } else {
+      winner = "TTJ"
+    }
+  } else if(stop_state == 2) {
+    # Second player won
+    if(user_code == 1) {
+      winner = "TTJ"
+    } else {
+      winner = "user"
+    }
+  } else if(move_nr == 9) {
+    # It's a draw
+    winner = "draw"
+  } else {
+    winner = NULL
+  }
+  return(winner)
+}
+
+# Display who won
+DisplayWinner = function(winner) {
+  print(paste("The winner is:", winner))
+}

@@ -45,7 +45,7 @@ server <- function(input, output, session) {
     if (input$random_starts > 0 ) {
       val$who_starts = sample(c("user", "TTJ"), 1)
       val$whose_turn = val$who_starts
-      val$user_code = if(val$who_starts == user) {1} else {2}
+      val$user_code = if(val$who_starts == "user") {1} else {2}
       removeModal()
     }
   })
@@ -165,17 +165,17 @@ server <- function(input, output, session) {
       print(paste("val$PathRun:", paste(val$PathRun, collapse = " ")))
       
       # Check if game ended
-      # TODO    
+      winner = CheckIfWon(StopStates, val$PathRun, val$move_nr, val$user_code)
+      print(paste("winner:", winner))
       
-      # Display who won
-      # TODO
-      
-      # Disable further moves
-      # TODO #seems to be done -> only one move per turn is possible due to how pressing buttons works
-      
-      # TTJs turn
-      val$whose_turn = "TTJ"
-      val$move_nr = val$move_nr + 1
+      if(is.null(winner)) {
+        # TTJs turn
+        val$whose_turn = "TTJ"
+        val$move_nr = val$move_nr + 1
+      } else {
+        # Game ends - display who won
+        DisplayWinner(winner)
+      }
     }
   })
   
@@ -202,14 +202,17 @@ server <- function(input, output, session) {
       UpdateButton(WhichButton=BoardTileNames[[TTJs_choice]], isHuman=FALSE, session)
       
       # Check if game ended
-      # TODO    
+      winner = CheckIfWon(StopStates, val$PathRun, val$move_nr, val$user_code)
+      print(paste("winner:", winner))
       
-      # Display who won
-      # TODO
-      
-      # users turn
-      val$whose_turn = "user"
-      val$move_nr = val$move_nr + 1
+      if(is.null(winner)) {
+        # TTJs turn
+        val$whose_turn = "user"
+        val$move_nr = val$move_nr + 1
+      } else {
+        # Game ends - display who won
+        DisplayWinner(winner)
+      }
     }
   })
   
