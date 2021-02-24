@@ -29,6 +29,7 @@ server <- function(input, output, session) {
     if (input$user_starts > 0 ) {
       val$who_starts = "user"
       val$whose_turn = val$who_starts
+      val$user_code = 1
       removeModal()
     }
   })
@@ -36,6 +37,7 @@ server <- function(input, output, session) {
     if (input$TTJ_starts > 0 ) {
       val$who_starts = "TTJ"
       val$whose_turn = val$who_starts
+      val$user_code = 2
       removeModal()
     }
   })
@@ -43,6 +45,7 @@ server <- function(input, output, session) {
     if (input$random_starts > 0 ) {
       val$who_starts = sample(c("user", "TTJ"), 1)
       val$whose_turn = val$who_starts
+      val$user_code = if(val$who_starts == user) {1} else {2}
       removeModal()
     }
   })
@@ -146,13 +149,11 @@ server <- function(input, output, session) {
       UpdateButton(WhichButton=val$pressed_button, isHuman=TRUE, session)
       
       # Make the users move in the backend
-      # TODO finish
-      
-      ## Denote move in current_boardstate
-      val$current_boardstate[val$users_move] = UserCode
+       ## Denote move in current_boardstate
+      val$current_boardstate[val$users_move] = val$user_code
       print(paste("val$current_boardstate:", paste(val$current_boardstate, collapse = " ")))
       
-      ## Update PathRun
+       ## Update PathRun
       unique_current_boardstate = c(GetEquivalentStates(val$current_boardstate)[8,])
       print(paste("unique_current_boardstate:", paste(unique_current_boardstate, collapse = " ")))
       for (j in 1:length(LinkedStates[[val$move_nr]][[val$PathRun[val$move_nr]]])) {
@@ -170,7 +171,7 @@ server <- function(input, output, session) {
       # TODO
       
       # Disable further moves
-      # TODO #seems to be done -> only one move per turn is possible
+      # TODO #seems to be done -> only one move per turn is possible due to how pressing buttons works
       
       # TTJs turn
       val$whose_turn = "TTJ"
@@ -184,8 +185,6 @@ server <- function(input, output, session) {
   observeEvent(val$whose_turn, {
     if(val$whose_turn == "TTJ") {
       # Make TTJs move in the backend
-      # TODO - finish - When user starts it seems to work. Something goes wrong when TTJ starts. Board state gets a number 1 when TTJ starts and moves - should get a 2
-      
       print(paste("Level of confidence:", round(max(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]])*100, 0),"%"))
       print(paste("All probabilities are:", paste(round(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]], 3), collapse=", ")))
       Sys.sleep(2)
@@ -200,7 +199,6 @@ server <- function(input, output, session) {
       print(paste("TTJ made the move:", TTJs_choice, "so", BoardTileNames[[TTJs_choice]]))
       
       # Update board tile with TTJs move
-      # TODO
       UpdateButton(WhichButton=BoardTileNames[[TTJs_choice]], isHuman=FALSE, session)
       
       # Check if game ended

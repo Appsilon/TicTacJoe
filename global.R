@@ -23,12 +23,10 @@ steps_in_plot_chunk = 100 #500
 # User
 NiceColorUser = rgb(69, 177, 239, max=255) # nice shade of blue
 NiceIconUser = icon("close icon")
-UserCode = 1
 
 # TTJ
 NiceColorTTJ = rgb(165, 81, 184, max=255)  # nice shade of purple
 NiceIconTTJ = icon("circle outline")
-TTJCode = 2
 
 # Load precomputed game setup
 PrecomputedFilesLocation = "precomputed_state"
