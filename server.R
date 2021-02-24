@@ -173,6 +173,7 @@ server <- function(input, output, session) {
         val$whose_turn = "TTJ"
         val$move_nr = val$move_nr + 1
       } else {
+        val$whose_turn = NULL
         # Game ends - display who won
         DisplayWinner(winner)
       }
