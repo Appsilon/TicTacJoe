@@ -38,19 +38,23 @@ load(file=file.path(PrecomputedFilesLocation, "ProbStates.RData"))
 RandomProbStates = ProbStates  # this stores the untrained TTJ
 
 # Update button after click
-UpdateButton = function(WhichButton, isHuman, session) {
+UpdateButton = function(WhichButton, toState, session) {
   # Button is from the top_left, top_middle, top_right, middle_left, ... convention
-  # isHuman is TRUE if it is the user, FALSE if it is the TTJ
-  if(isHuman){
+  # toState is "user" if the user clicked, "TTJ" if this is TTJs move, "default" if button should be returned to unpressed state
+  if(toState == "user") {
     shinyjs::disable(WhichButton)
     # modify to keep the color from getting greyed
     runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{NiceColorUser}";'))
     update_action_button(session, input_id = WhichButton, icon = NiceIconUser)
-    } else {
+  } else if(toState == "TTJ") {
     shinyjs::disable(WhichButton)
     # modify to keep the color from getting greyed
     runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{NiceColorTTJ}";'))
     update_action_button(session, input_id = WhichButton, icon = NiceIconTTJ)
+  } else if(toState == "default") {
+    shinyjs::enable(WhichButton)
+    runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{rgb(224, 226, 226, max=255)}";'))
+    update_action_button(session, input_id = WhichButton, icon = NULL)
   }
   return()
 }
@@ -151,9 +155,7 @@ GetEquivalentStates = function(current_boardstate) {
 
 # Check if someone won the game (returns: "user", "TTJ", "draw", or NULL in case no winner yet)
 CheckIfWon = function(StopStates, PathRun, move_nr, user_code) {
-  print(paste("move_nr:", move_nr))
   stop_state = StopStates[[move_nr+1]][[PathRun[move_nr+1]]]
-  print(paste("stop_state:", stop_state))
   if(stop_state == 1) {
     # First player won
     if(user_code == 1) {

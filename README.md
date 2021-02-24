@@ -10,10 +10,16 @@ The first version of the code for the game (with some very basic UI), was develo
 - **DONE** Make training update state of TTJ
 - **DONE** Add flushing training,
 - **DONE** Enable/disable training and flushing
-- Prevent the disabled moves from greying out (modify UpdateButton)
-- Run game - alternating and storing progress
-- Display probabilities of a move
+- **DONE** Prevent the disabled moves from greying out (modify UpdateButton)
+- **DONE** Run game - alternating and storing progress
 - **DONE** Display saturation for a given move (?)
-- Rearrange UI nicely
-- Reset the state of the game board when the modal with it is closed
+- Fix: display icon immediately after users move (not after TTJ moves)
+- Cancel game also when user clicks next to the modal
+- Return tile color to default not black when game is cancelled
 - prevent the "first" button to be "hovered-on" when loading a page (main and the game as well)
+
+- Display probabilities of a move on tiles
+- Display who won nicely
+- Rearrange UI nicely
+
+- Optimize code to speed up training

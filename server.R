@@ -81,6 +81,22 @@ server <- function(input, output, session) {
   }, ignoreInit = TRUE)
   
   observeEvent(input$cancel_game,{
+    print("Game cancelled!")
+    isolate({
+      val$who_starts = NULL
+      val$users_move = NULL
+      val$whose_turn = ""
+      
+      val$current_boardstate = rep(0,N)
+      val$unique_current_boardstate = rep(0,N)
+      val$PathRun = 1
+      val$SelectedMoves = runif(N,0,1)
+      val$move_nr = 1
+    })
+    for(tile in BoardTileNames) {
+      UpdateButton(WhichButton = tile, toState="default", session)
+    }
+    
     removeModal()
     # TODO reset the state of the game
   })
@@ -146,28 +162,26 @@ server <- function(input, output, session) {
   observeEvent(val$users_move, {
     if(val$whose_turn == "user"){
       # Update board tile with the users move
-      UpdateButton(WhichButton=val$pressed_button, isHuman=TRUE, session)
+      UpdateButton(WhichButton=val$pressed_button, toState="user", session)
       
       # Make the users move in the backend
        ## Denote move in current_boardstate
       val$current_boardstate[val$users_move] = val$user_code
-      print(paste("val$current_boardstate:", paste(val$current_boardstate, collapse = " ")))
+      print(paste("val$current_boardstate:", paste(val$current_boardstate, collapse = " "), "(user moved)"))
       
        ## Update PathRun
       unique_current_boardstate = c(GetEquivalentStates(val$current_boardstate)[8,])
-      print(paste("unique_current_boardstate:", paste(unique_current_boardstate, collapse = " ")))
+      #print(paste("unique_current_boardstate:", paste(unique_current_boardstate, collapse = " ")))
       for (j in 1:length(LinkedStates[[val$move_nr]][[val$PathRun[val$move_nr]]])) {
         if(all(States[[val$move_nr+1]][[LinkedStates[[val$move_nr]][[val$PathRun[val$move_nr]]][j]]] == unique_current_boardstate)) {
           val$PathRun[val$move_nr+1] = LinkedStates[[val$move_nr]][[val$PathRun[val$move_nr]]][j]
           break
         }
       }
-      print(paste("val$PathRun:", paste(val$PathRun, collapse = " ")))
+      #print(paste("val$PathRun:", paste(val$PathRun, collapse = " ")))
       
       # Check if game ended
       winner = CheckIfWon(StopStates, val$PathRun, val$move_nr, val$user_code)
-      print(paste("winner:", winner))
-      
       if(is.null(winner)) {
         # TTJs turn
         val$whose_turn = "TTJ"
@@ -185,10 +199,26 @@ server <- function(input, output, session) {
   
   observeEvent(val$whose_turn, {
     if(val$whose_turn == "TTJ") {
+      # Print probabilities of moves
+      #print(paste("Level of confidence:", round(max(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]])*100, 0),"%"))
+      #print(paste("All probabilities are:", paste(round(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]], 3), collapse=", ")))
+      for(i in 1:length(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]])) { # loop over possible moves
+        prob_next_state = ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]][[i]]
+        next_state = States[[val$move_nr+1]][[LinkedStates[[val$move_nr]][[val$PathRun[val$move_nr]]][[i]]]]
+        equivalent_next_states = GetEquivalentStates(next_state)
+        # find index of equivalent_next_states with only one change needed to get to current_boardstate
+        for(j in 1:8) { # loop over equivalent states
+          changes_needed = which(val$current_boardstate != equivalent_next_states[j,])
+          if(length(changes_needed) == 1) { # the new move is the only difference
+            next_move = BoardTileNames[changes_needed]
+            break
+          }
+        }
+        print(paste("move:", next_move, "prob:", paste0(round(prob_next_state * 100), "%")))
+      }
+      
       # Make TTJs move in the backend
-      print(paste("Level of confidence:", round(max(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]])*100, 0),"%"))
-      print(paste("All probabilities are:", paste(round(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]], 3), collapse=", ")))
-      Sys.sleep(2)
+      Sys.sleep(1)
       Probabilities = cumsum(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]])
       val$PathRun[val$move_nr+1] = LinkedStates[[val$move_nr]][[val$PathRun[val$move_nr]]][which(val$SelectedMoves[[val$move_nr]] < Probabilities)[1]]
       unique_current_boardstate = States[[val$move_nr+1]][[val$PathRun[[val$move_nr+1]]]]
@@ -200,12 +230,10 @@ server <- function(input, output, session) {
       print(paste("TTJ made the move:", TTJs_choice, "so", BoardTileNames[[TTJs_choice]]))
       
       # Update board tile with TTJs move
-      UpdateButton(WhichButton=BoardTileNames[[TTJs_choice]], isHuman=FALSE, session)
+      UpdateButton(WhichButton=BoardTileNames[[TTJs_choice]], toState="TTJ", session)
       
       # Check if game ended
       winner = CheckIfWon(StopStates, val$PathRun, val$move_nr, val$user_code)
-      print(paste("winner:", winner))
-      
       if(is.null(winner)) {
         # TTJs turn
         val$whose_turn = "user"
@@ -241,6 +269,8 @@ server <- function(input, output, session) {
     val$check_prob_1 = 0.33
     val$check_prob_2 = 0.33
     val$check_prob_3 = 0.33
+    print(paste("Probabilites of first TTJs move:", paste(round(ProbStates[[1]][[1]], 3), collapse=" ")))
+    print(paste("Temperature:", round(Temperature, 3)))
   })
 
   observeEvent(input$train_more,{
@@ -263,8 +293,8 @@ server <- function(input, output, session) {
           # At end of training level, update the level
           val$level_idx = val$level_idx + 1
           val$run_training = FALSE
-          print(ProbStates[[1]][[1]])
-          print(Temperature)
+          print(paste("Probabilites of first TTJs move:", paste(round(ProbStates[[1]][[1]],3), collapse=" ")))
+          print(paste("Temperature:", round(Temperature, 3)))
         }
       })
       if(isolate(val$training_step) < LengthOfTraining){
@@ -276,7 +306,7 @@ server <- function(input, output, session) {
   output$TTJLevel <- renderText(paste("TicTacJoe is a", "<b>", TTJLevels[[val$level_idx]], "</b>"))
 
   output$move_prob_1 <- renderPlot({
-    plot(val$check_prob_1, type='l', xlim=c(0,LengthOfTraining), ylim=c(0,1), xlab="", ylab="Probability", main="Pick corner")
+    plot(val$check_prob_1, type='l', xlim=c(0,LengthOfTraining), ylim=c(0,1), xlab="", ylab="Probability of TTJs first move when he starts", main="Pick corner")
     points(val$training_step, tail(val$check_prob_1, n=1), col=NiceColorTTJ, cex=3, pch=19)
   }, width = 500)
   output$move_prob_2 <- renderPlot({
