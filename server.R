@@ -10,13 +10,13 @@ server <- function(input, output, session) {
     
     who_starts = NULL,
     users_move = NULL,
-    whose_turn = "",
+    whose_turn = ""
     
-    current_boardstate = rep(0,N),
-    unique_current_boardstate = rep(0,N),
-    PathRun = 1,
-    SelectedMoves = runif(N,0,1),
-    move_nr = 1 # move_nr = i-1, since i=2 initially
+    # current_boardstate = rep(0,N),
+    # unique_current_boardstate = rep(0,N),
+    # PathRun = 1,
+    # SelectedMoves = runif(N,0,1),
+    # move_nr = 1 # move_nr = i-1, since i=2 initially
   )
   
   ##########################
@@ -56,12 +56,33 @@ server <- function(input, output, session) {
   # Game modal
   ##########################
   observeEvent(val$who_starts, {
+    # Clean game state before the game
+    # val$who_starts = NULL
+    val$users_move = NULL
+    # val$whose_turn = ""
+    
+    val$current_boardstate = rep(0,N)
+    val$unique_current_boardstate = rep(0,N)
+    val$PathRun = 1
+    val$SelectedMoves = runif(N,0,1)
+    val$move_nr = 1
+    for(tile in BoardTileNames) {
+      UpdateButton(WhichButton = tile, toState="default", session)
+    }
+    # Hide last winner
+    HideWinner()
+    
+    # Create board for game
     create_modal(modal(
       id = "game_modal",
-      header = list(style = "background: lightgray", "Let's play a game!"),
+      header = list(id = "game_modal_header", style = "background: lightgray", p(id="game_header", "Let's play a game!")),
       # content = list(style = "background: lightblue", `data-custom` = "value", "This is an important message!"),
       footer = div(action_button(input_id = "cancel_game", label = "End game")),
       div(class = "ui grid centered three column",
+          # div(
+          #   action_button(input_id = "top_left", label = ""),
+          #   div(style = "position: absolute; margin-top: -20px; margin-left: 10px", span("43%"))
+          # ),
           action_button(input_id = "top_left", label = ""),
           action_button(input_id = "top_middle", label = ""),
           action_button(input_id = "top_right", label = ""),
@@ -77,28 +98,14 @@ server <- function(input, output, session) {
           action_button(input_id = "bottom_right", label = ""),
       )
     ))
-    val$who_starts = NULL
+    isolate({
+      val$who_starts = NULL
+    })
   }, ignoreInit = TRUE)
   
   observeEvent(input$cancel_game,{
     print("Game cancelled!")
-    isolate({
-      val$who_starts = NULL
-      val$users_move = NULL
-      val$whose_turn = ""
-      
-      val$current_boardstate = rep(0,N)
-      val$unique_current_boardstate = rep(0,N)
-      val$PathRun = 1
-      val$SelectedMoves = runif(N,0,1)
-      val$move_nr = 1
-    })
-    for(tile in BoardTileNames) {
-      UpdateButton(WhichButton = tile, toState="default", session)
-    }
-    
     removeModal()
-    # TODO reset the state of the game
   })
   
   observeEvent(input$top_left,{
@@ -199,9 +206,10 @@ server <- function(input, output, session) {
   
   observeEvent(val$whose_turn, {
     if(val$whose_turn == "TTJ") {
-      # Print probabilities of moves
+      # Display probabilities of moves
       #print(paste("Level of confidence:", round(max(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]])*100, 0),"%"))
       #print(paste("All probabilities are:", paste(round(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]], 3), collapse=", ")))
+      val$next_moves = 1
       for(i in 1:length(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]])) { # loop over possible moves
         prob_next_state = ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]][[i]]
         next_state = States[[val$move_nr+1]][[LinkedStates[[val$move_nr]][[val$PathRun[val$move_nr]]][[i]]]]
@@ -215,10 +223,27 @@ server <- function(input, output, session) {
           }
         }
         print(paste("move:", next_move, "prob:", paste0(round(prob_next_state * 100), "%")))
+        val$next_moves[[i]] = next_move
+        update_action_button(session, input_id = next_move, label=paste0(round(prob_next_state * 100), "%"))
       }
-      
-      # Make TTJs move in the backend
       Sys.sleep(1)
+      val$clean_probs = TRUE
+    }
+  })
+  
+  observeEvent(val$clean_probs, {
+    for(tile in val$next_moves) {
+      update_action_button(session, input_id = tile, label="")
+    }
+    isolate({
+      val$clean_probs = NULL
+    })
+    val$TTJ_makes_move = TRUE
+  })
+  
+  observeEvent(val$TTJ_makes_move, {
+    if(val$whose_turn == "TTJ") {
+      # Make TTJs move in the backend
       Probabilities = cumsum(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]])
       val$PathRun[val$move_nr+1] = LinkedStates[[val$move_nr]][[val$PathRun[val$move_nr]]][which(val$SelectedMoves[[val$move_nr]] < Probabilities)[1]]
       unique_current_boardstate = States[[val$move_nr+1]][[val$PathRun[[val$move_nr+1]]]]
@@ -242,6 +267,9 @@ server <- function(input, output, session) {
         # Game ends - display who won
         DisplayWinner(winner)
       }
+      isolate({
+        val$TTJ_makes_move = NULL
+      })
     }
   })
   

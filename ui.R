@@ -1,4 +1,5 @@
 semanticPage(
+  suppress_bootstrap = TRUE,
   useShinyjs(),
   
   tags$head(

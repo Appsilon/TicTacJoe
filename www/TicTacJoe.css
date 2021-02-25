@@ -9,5 +9,24 @@
 }
 
 .ui.button:not(.icon)>.icon:not(.button):not(.dropdown), .ui.button:not(.icon)>.icons:not(.button):not(.dropdown) {
-    margin: 0 0 0 0;
+  margin: 0 0 0 0;
 }
+
+.game_ended {
+  text-align: center;
+}
+
+.game_ended_won {
+  background: rgb(115, 201, 115) !important;
+}
+
+.game_ended_lost {
+  background: rgb(232, 141, 135) !important;
+}
+/* blocks darkening on first button, but also blocks hover
+.ui.button:focus {
+  background: #e0e1e2 !important;
+  color: rgba(0,0,0,.6) !important;
+}
+*/
+

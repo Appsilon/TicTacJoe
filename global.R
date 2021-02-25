@@ -11,7 +11,7 @@ alfa_one = 0.5 # Relative convergence of probabilities of top level
 alfa_two = 0.6 # Relative convergence of probabilities of bottom level
 alfa = seq(alfa_one,alfa_two,(alfa_two-alfa_one)/N)
 
-LengthOfTraining = 1000 #100000   # Total number of games until expert
+LengthOfTraining = 1000 #100000  # Total number of games until expert
 InitialTemperature = 0.9
 FinalTemperature = 0.03
 TemperatureDecreaseStep = (FinalTemperature-InitialTemperature)/LengthOfTraining   # How much to decrease in one step of training
@@ -40,7 +40,7 @@ RandomProbStates = ProbStates  # this stores the untrained TTJ
 # Update button after click
 UpdateButton = function(WhichButton, toState, session) {
   # Button is from the top_left, top_middle, top_right, middle_left, ... convention
-  # toState is "user" if the user clicked, "TTJ" if this is TTJs move, "default" if button should be returned to unpressed state
+  # toState is "user" if the user clicked, "TTJ" if it is TTJs move, "default" if button should be returned to unpressed state
   if(toState == "user") {
     shinyjs::disable(WhichButton)
     # modify to keep the color from getting greyed
@@ -54,7 +54,7 @@ UpdateButton = function(WhichButton, toState, session) {
   } else if(toState == "default") {
     shinyjs::enable(WhichButton)
     runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{rgb(224, 226, 226, max=255)}";'))
-    update_action_button(session, input_id = WhichButton, icon = NULL)
+    update_action_button(session, input_id = WhichButton, icon = NULL, label = "")
   }
   return()
 }
@@ -182,4 +182,23 @@ CheckIfWon = function(StopStates, PathRun, move_nr, user_code) {
 # Display who won
 DisplayWinner = function(winner) {
   print(paste("The winner is:", winner))
+  if(winner == "TTJ") {
+    text_to_show = "You lost to TicTacJoe!"
+    addClass(id = "game_modal_header", class="game_ended_lost")
+  } else if (winner == "user") {
+    text_to_show = "You won!"
+    addClass(id = "game_modal_header", class="game_ended_won")
+  } else if (winner == "draw") {
+    text_to_show = "It's a draw"
+  }
+  runjs(glue('document.getElementById("game_header").textContent = "{text_to_show}";'))
+  addClass(id = "game_modal_header", class="game_ended")
+}
+
+# Hide who won the last game (e.g., when starting a new one)
+HideWinner = function() {
+  runjs(glue('document.getElementById("game_header").textContent = "Let\'s play a game!";'))
+  removeClass(id = "game_modal_header", class="game_ended")
+  removeClass(id = "game_modal_header", class="game_ended_won")
+  removeClass(id = "game_modal_header", class="game_ended_lost")
 }
