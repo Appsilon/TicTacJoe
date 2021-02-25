@@ -13,13 +13,13 @@ The first version of the code for the game (with some very basic UI), was develo
 - **DONE** Prevent the disabled moves from greying out (modify UpdateButton)
 - **DONE** Run game - alternating and storing progress
 - **DONE** Display saturation for a given move (?)
+- **DONE** Cancel game also when user clicks next to the modal
+- **DONE** Return tile color to default not black when game is cancelled
+- **DONE** Display who won nicely
+
 - Fix: display icon immediately after users move (not after TTJ moves)
-- Cancel game also when user clicks next to the modal
-- Return tile color to default not black when game is cancelled
+- Fix: display probabilities of a move on tiles (now they are shown and hidden immediately)
 - prevent the "first" button to be "hovered-on" when loading a page (main and the game as well)
 
-- Display probabilities of a move on tiles
-- Display who won nicely
-- Rearrange UI nicely
-
 - Optimize code to speed up training
+- Rearrange UI nicely
