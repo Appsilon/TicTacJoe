@@ -34,7 +34,8 @@ semanticPage(
         action_button(input_id = "user_starts", label = "I want to start"),
         action_button(input_id = "TTJ_starts", label = "TicTacJoe starts"),
         action_button(input_id = "random_starts", label = "Random option"),
-    )
+    ),
+    settings = list(c("autofocus", "false"))
   ),
   
   # modal(

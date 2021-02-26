@@ -94,7 +94,8 @@ server <- function(input, output, session) {
           action_button(input_id = "bottom_left", label = ""),
           action_button(input_id = "bottom_middle", label = ""),
           action_button(input_id = "bottom_right", label = ""),
-      )
+      ),
+      settings = list(c("autofocus", "false"))
     ))
     isolate({
       val$who_starts = NULL
