@@ -16,10 +16,9 @@ The first version of the code for the game (with some very basic UI), was develo
 - **DONE** Cancel game also when user clicks next to the modal
 - **DONE** Return tile color to default not black when game is cancelled
 - **DONE** Display who won nicely
-
-- Fix: display icon immediately after users move (not after TTJ moves)
-- Fix: display probabilities of a move on tiles (now they are shown and hidden immediately)
-- prevent the "first" button to be "hovered-on" when loading a page (main and the game as well)
+- **DONE** Fix: display icon immediately after users move (not after TTJ moves)
+- **DONE** Fix: display probabilities of a move on tiles (now they are shown and hidden immediately)
+- **DONE** prevent the "first" button to be "hovered-on" when loading a page (main and the game as well)
 
 - Optimize code to speed up training
 - Rearrange UI nicely
