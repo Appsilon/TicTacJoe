@@ -22,7 +22,7 @@ steps_in_plot_chunk = 100 #500
 
 # User
 NiceColorUser = rgb(69, 177, 239, max=255) # nice shade of blue
-NiceIconUser = icon("close icon")
+NiceIconUser <- HTML("<i class='close icon icon'></i>")
 
 # TTJ
 NiceColorTTJ = rgb(165, 81, 184, max=255)  # nice shade of purple
@@ -45,7 +45,7 @@ UpdateButton = function(WhichButton, toState, session) {
     shinyjs::disable(WhichButton)
     # modify to keep the color from getting greyed
     runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{NiceColorUser}";'))
-    update_action_button(session, input_id = WhichButton, icon = NiceIconUser)
+    runjs(glue('document.getElementById("{WhichButton}").innerHTML = "{NiceIconUser}";'))
   } else if(toState == "TTJ") {
     shinyjs::disable(WhichButton)
     # modify to keep the color from getting greyed
@@ -94,7 +94,7 @@ UpdateProbabilitiesUsingPath = function(path, StopStates, LinkedStates, ProbStat
     adj_prob = numeric(length(calculate_probabilities))
     if (player==1 && ((k %% 2) + 1)==1) {
       if (path_result==1) {
-        adj_prob[index_prob_changed] = alfa[k] 
+        adj_prob[index_prob_changed] = alfa[k]
       } else if(path_result==0) {
         adj_prob[index_prob_changed] = 0
       } else if(path_result==2) {
@@ -109,10 +109,10 @@ UpdateProbabilitiesUsingPath = function(path, StopStates, LinkedStates, ProbStat
         adj_prob[index_prob_changed] = -alfa[k]
       }
     }
-    
+
     ProbStates[[k-1]][[path[k-1]]] = Softmax(calculate_probabilities + adj_prob, Temperature)
   }
-  
+
   return(ProbStates)
 }
 
