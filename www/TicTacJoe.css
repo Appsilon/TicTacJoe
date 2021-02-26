@@ -24,10 +24,5 @@
 .game_ended_lost {
   background: rgb(232, 141, 135) !important;
 }
-/* blocks darkening on first button, but also blocks hover
-.ui.button:focus {
-  background: #e0e1e2 !important;
-  color: rgba(0,0,0,.6) !important;
-}
-*/
+
 
