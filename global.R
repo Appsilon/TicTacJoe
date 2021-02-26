@@ -11,14 +11,14 @@ alfa_one = 0.5 # Relative convergence of probabilities of top level
 alfa_two = 0.6 # Relative convergence of probabilities of bottom level
 alfa = seq(alfa_one,alfa_two,(alfa_two-alfa_one)/N)
 
-LengthOfTraining = 1000 #100000  # Total number of games until expert
+LengthOfTraining = 10000 #1000 #100000  # Total number of games until expert
 InitialTemperature = 0.9
 FinalTemperature = 0.03
 TemperatureDecreaseStep = (FinalTemperature-InitialTemperature)/LengthOfTraining   # How much to decrease in one step of training
 Temperature = InitialTemperature
 
 # For plotting chunks
-steps_in_plot_chunk = 100 #500
+steps_in_plot_chunk = 200 #100 #500
 
 # User
 NiceColorUser = rgb(69, 177, 239, max=255) # nice shade of blue

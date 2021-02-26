@@ -264,6 +264,7 @@ server <- function(input, output, session) {
         val$move_nr = val$move_nr + 1
       } else {
         # Game ends - display who won
+        val$whose_turn = NULL
         DisplayWinner(winner)
       }
       isolate({

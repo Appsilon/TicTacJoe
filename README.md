@@ -19,6 +19,9 @@ The first version of the code for the game (with some very basic UI), was develo
 - **DONE** Fix: display icon immediately after users move (not after TTJ moves)
 - **DONE** Fix: display probabilities of a move on tiles (now they are shown and hidden immediately)
 - **DONE** prevent the "first" button to be "hovered-on" when loading a page (main and the game as well)
+- **DONE** Fix: after TTJ wins, in new game that he starts he doesn't make the move
+
+- Polish the graphs not to be grayed out when updating during training
 
 - Optimize code to speed up training
 - Rearrange UI nicely
