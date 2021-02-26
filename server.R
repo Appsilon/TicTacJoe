@@ -57,9 +57,7 @@ server <- function(input, output, session) {
   ##########################
   observeEvent(val$who_starts, {
     # Clean game state before the game
-    # val$who_starts = NULL
     val$users_move = NULL
-    # val$whose_turn = ""
 
     val$current_boardstate = rep(0,N)
     val$unique_current_boardstate = rep(0,N)
@@ -226,7 +224,7 @@ server <- function(input, output, session) {
         val$next_moves[[i]] = next_move
         runjs(glue('document.getElementById("{next_move}").innerHTML = "{paste0(round(prob_next_state * 100), "%")}";'))
       }
-      Sys.sleep(1)
+      Sys.sleep(2)
       val$clean_probs = TRUE
     }
   })

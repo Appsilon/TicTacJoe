@@ -53,8 +53,9 @@ UpdateButton = function(WhichButton, toState, session) {
     update_action_button(session, input_id = WhichButton, icon = NiceIconTTJ)
   } else if(toState == "default") {
     shinyjs::enable(WhichButton)
-    runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{rgb(224, 226, 226, max=255)}";'))
-    update_action_button(session, input_id = WhichButton, icon = NULL, label = "")
+    runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{rgb(225, 225, 225, max=255)}";'))
+    runjs(glue('document.getElementById("{WhichButton}").innerHTML = "";'))
+    # update_action_button(session, input_id = WhichButton, icon = NULL, label = "")
   }
   return()
 }
