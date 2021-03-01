@@ -1,6 +1,8 @@
 server <- function(input, output, session) {
 
   val <- reactiveValues(
+    ProbStates = ProbStates,
+    
     level_idx = 1,
     run_training = FALSE,
     training_step = 0,
@@ -206,11 +208,11 @@ server <- function(input, output, session) {
   observeEvent(val$whose_turn, {
     if(val$whose_turn == "TTJ") {
       # Display probabilities of moves
-      #print(paste("Level of confidence:", round(max(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]])*100, 0),"%"))
-      #print(paste("All probabilities are:", paste(round(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]], 3), collapse=", ")))
+      #print(paste("Level of confidence:", round(max(val$ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]])*100, 0),"%"))
+      #print(paste("All probabilities are:", paste(round(val$ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]], 3), collapse=", ")))
       val$next_moves = 1
-      for(i in 1:length(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]])) { # loop over possible moves
-        prob_next_state = ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]][[i]]
+      for(i in 1:length(val$ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]])) { # loop over possible moves
+        prob_next_state = val$ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]][[i]]
         next_state = States[[val$move_nr+1]][[LinkedStates[[val$move_nr]][[val$PathRun[val$move_nr]]][[i]]]]
         equivalent_next_states = GetEquivalentStates(next_state)
         # find index of equivalent_next_states with only one change needed to get to current_boardstate
@@ -243,7 +245,7 @@ server <- function(input, output, session) {
   observeEvent(val$TTJ_makes_move, {
     if(val$whose_turn == "TTJ") {
       # Make TTJs move in the backend
-      Probabilities = cumsum(ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]])
+      Probabilities = cumsum(val$ProbStates[[val$move_nr]][[val$PathRun[val$move_nr]]])
       val$PathRun[val$move_nr+1] = LinkedStates[[val$move_nr]][[val$PathRun[val$move_nr]]][which(val$SelectedMoves[[val$move_nr]] < Probabilities)[1]]
       unique_current_boardstate = States[[val$move_nr+1]][[val$PathRun[[val$move_nr+1]]]]
       equivalent_states = GetEquivalentStates(unique_current_boardstate)
@@ -290,14 +292,14 @@ server <- function(input, output, session) {
   })
 
   observeEvent(input$flush_training,{
-    ProbStates <<- RandomProbStates
+    val$ProbStates <<- RandomProbStates
     Temperature <<- InitialTemperature
     val$level_idx = 1
     val$training_step = 0
     val$check_prob_1 = 0.33
     val$check_prob_2 = 0.33
     val$check_prob_3 = 0.33
-    print(paste("Probabilites of first TTJs move:", paste(round(ProbStates[[1]][[1]], 3), collapse=" ")))
+    print(paste("Probabilites of first TTJs move:", paste(round(val$ProbStates[[1]][[1]], 3), collapse=" ")))
     print(paste("Temperature:", round(Temperature, 3)))
   })
 
@@ -310,18 +312,18 @@ server <- function(input, output, session) {
       # This block is scheduled many times - should run steps_in_plot_chunk many steps of training
         for (i in 1:steps_in_plot_chunk) {
           # Run a chunk of training
-          ProbStates <<- RunTicTacToeComputerVSComputer(States,StopStates,LinkedStates,ProbStates,Temperature)
+          val$ProbStates <<- RunTicTacToeComputerVSComputer(States,StopStates,LinkedStates,val$ProbStates,Temperature)
           Temperature <<- Temperature + TemperatureDecreaseStep
-          val$check_prob_1[val$training_step] <- ProbStates[[1]][[1]][[1]]
-          val$check_prob_2[val$training_step] <- ProbStates[[1]][[1]][[2]]
-          val$check_prob_3[val$training_step] <- ProbStates[[1]][[1]][[3]]
+          val$check_prob_1[val$training_step] <- val$ProbStates[[1]][[1]][[1]]
+          val$check_prob_2[val$training_step] <- val$ProbStates[[1]][[1]][[2]]
+          val$check_prob_3[val$training_step] <- val$ProbStates[[1]][[1]][[3]]
           val$training_step <- val$training_step + 1
         }
         if(val$training_step %% floor(LengthOfTraining/2) == 0){
           # At end of training level, update the level
           val$level_idx = val$level_idx + 1
           val$run_training = FALSE
-          print(paste("Probabilites of first TTJs move:", paste(round(ProbStates[[1]][[1]],3), collapse=" ")))
+          print(paste("Probabilites of first TTJs move:", paste(round(val$ProbStates[[1]][[1]],3), collapse=" ")))
           print(paste("Temperature:", round(Temperature, 3)))
         }
       })
@@ -329,6 +331,8 @@ server <- function(input, output, session) {
         invalidateLater(0, session)
       }
     }
+    # check_prob_1 = val$check_prob_1
+    # save(check_prob_1, file="check_prob_1.RData")
   })
 
   output$TTJLevel <- renderText(paste("TicTacJoe is a", "<b>", TTJLevels[[val$level_idx]], "</b>"))
