@@ -2,7 +2,7 @@ server <- function(input, output, session) {
 
   val <- reactiveValues(
     ProbStates = ProbStates,
-    
+    Temperature = InitialTemperature,
     level_idx = 1,
     run_training = FALSE,
     training_step = 0,
@@ -293,14 +293,14 @@ server <- function(input, output, session) {
 
   observeEvent(input$flush_training,{
     val$ProbStates <<- RandomProbStates
-    Temperature <<- InitialTemperature
+    val$Temperature <<- InitialTemperature
     val$level_idx = 1
     val$training_step = 0
     val$check_prob_1 = 0.33
     val$check_prob_2 = 0.33
     val$check_prob_3 = 0.33
     print(paste("Probabilites of first TTJs move:", paste(round(val$ProbStates[[1]][[1]], 3), collapse=" ")))
-    print(paste("Temperature:", round(Temperature, 3)))
+    print(paste("Temperature:", round(val$Temperature, 3)))
   })
 
   observeEvent(input$train_more,{
@@ -312,8 +312,8 @@ server <- function(input, output, session) {
       # This block is scheduled many times - should run steps_in_plot_chunk many steps of training
         for (i in 1:steps_in_plot_chunk) {
           # Run a chunk of training
-          val$ProbStates <<- RunTicTacToeComputerVSComputer(States,StopStates,LinkedStates,val$ProbStates,Temperature)
-          Temperature <<- Temperature + TemperatureDecreaseStep
+          val$ProbStates <<- RunTicTacToeComputerVSComputer(States,StopStates,LinkedStates,val$ProbStates,val$Temperature)
+          val$Temperature <<- val$Temperature + TemperatureDecreaseStep
           val$check_prob_1[val$training_step] <- val$ProbStates[[1]][[1]][[1]]
           val$check_prob_2[val$training_step] <- val$ProbStates[[1]][[1]][[2]]
           val$check_prob_3[val$training_step] <- val$ProbStates[[1]][[1]][[3]]
@@ -324,7 +324,7 @@ server <- function(input, output, session) {
           val$level_idx = val$level_idx + 1
           val$run_training = FALSE
           print(paste("Probabilites of first TTJs move:", paste(round(val$ProbStates[[1]][[1]],3), collapse=" ")))
-          print(paste("Temperature:", round(Temperature, 3)))
+          print(paste("Temperature:", round(val$Temperature, 3)))
         }
       })
       if(isolate(val$training_step) < LengthOfTraining){

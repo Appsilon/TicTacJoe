@@ -15,7 +15,6 @@ LengthOfTraining = 10000 #1000 #100000  # Total number of games until expert
 InitialTemperature = 0.9
 FinalTemperature = 0.03
 TemperatureDecreaseStep = (FinalTemperature-InitialTemperature)/LengthOfTraining   # How much to decrease in one step of training
-Temperature = InitialTemperature
 
 # For plotting chunks
 steps_in_plot_chunk = 200 #100 #500
