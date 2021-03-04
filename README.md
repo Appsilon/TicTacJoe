@@ -1,9 +1,17 @@
 # TicTacJoe
 This repo holds a demo app with TicTacJoe - a reinforcement learning example for the game of Tic Tac Toe.
 
-The first version of the code for the game (with some very basic UI), was developed at Itility, by Donald van den Hoogenband and Jędrzej Świeżewski.
+Interestingly, the reinforcement learning back-end is implemented in pure R - with no libraries used.
+
+The app is deployed to the [internal connect server](https://internal.appsilon.ai/content/217/).
+
+The first version of the code for the game (with some very basic UI - can be found in the x11_version folder), was developed at Itility, by Donald van den Hoogenband and Jędrzej Świeżewski.
 
 # TODO
+- Polish the graphs not to be grayed out when updating during training
+- Optimize code to speed up training
+- Rearrange UI nicely
+
 - **DONE** "End game" button should close modal with game
 - **DONE** Let user choose who starts (now it is random)
 - **DONE** Fix UpdateButton so that it uses the update_action_button as well
@@ -20,8 +28,3 @@ The first version of the code for the game (with some very basic UI), was develo
 - **DONE** Fix: display probabilities of a move on tiles (now they are shown and hidden immediately)
 - **DONE** prevent the "first" button to be "hovered-on" when loading a page (main and the game as well)
 - **DONE** Fix: after TTJ wins, in new game that he starts he doesn't make the move
-
-- Polish the graphs not to be grayed out when updating during training
-
-- Optimize code to speed up training
-- Rearrange UI nicely
