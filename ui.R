@@ -19,7 +19,7 @@ semanticPage(
         Observe, how he gradually becomes a Tic Tac Toe guru :)"),
       p("The three graphs at the bottom visualize the evolution of the likelihoods of the first three possible moves TicTacJoe can make when he starts a game.
         They start from being equal (33% each), and as the training progresses, freeze out to always choosing the optimal move."),
-      p("To find out more about how TicTacJoe's brain works, ", a(href = 'https://appsilon.com', "read the accompanying blogpost.", .noWS = "outside"), ". Note, that the TicTacJoe's brain has been written in pure R, with no external libraries used.") 
+      p("To find out more about how TicTacJoe's brain works, ", a(href = 'https://appsilon.com', "read the accompanying blogpost", .noWS = "outside"), ". Note, that the TicTacJoe's brain has been written in pure R, with no external libraries used.") 
   ),
   
   tags$br(),
