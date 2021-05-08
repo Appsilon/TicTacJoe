@@ -87,7 +87,8 @@ semanticPage(
       split_layout(
         plotOutput("move_prob_1"),
         plotOutput("move_prob_2"),
-        plotOutput("move_prob_3")
+        plotOutput("move_prob_3"),
+        style = "background-color: default;"
       )
   ),
   
