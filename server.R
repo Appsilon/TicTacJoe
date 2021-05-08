@@ -20,7 +20,14 @@ server <- function(input, output, session) {
     # SelectedMoves = runif(N,0,1),
     # move_nr = 1 # move_nr = i-1, since i=2 initially
   )
-
+  ##########################
+  # Learn more
+  ##########################
+  
+  observeEvent(input$cancel_learn_more,{
+    removeModal()
+  })
+  
   ##########################
   # Play a game
   ##########################
@@ -335,7 +342,7 @@ server <- function(input, output, session) {
     # save(check_prob_1, file="check_prob_1.RData")
   })
 
-  output$TTJLevel <- renderText(paste("TicTacJoe is a", "<b>", TTJLevels[[val$level_idx]], "</b>"))
+  output$TTJLevel <- renderText(paste("TicTacJoe is currently a", "<b>", TTJLevels[[val$level_idx]], "</b>"))
 
   output$move_prob_1 <- renderPlot({
     plot(val$check_prob_1*100, type='l', xlim=c(0,LengthOfTraining), ylim=c(0,100), xlab="", ylab="Likelihood of TTJs first move when he starts", main="Pick corner")

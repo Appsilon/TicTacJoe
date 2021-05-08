@@ -25,4 +25,13 @@
   background: rgb(232, 141, 135) !important;
 }
 
+@font-face {  
+  src: url(Rubik-Medium.ttf);
+  font-family: "Rubik";
+}
 
+.TTJ_font {
+	font-family: 'Rubik';
+	font-size: 30px;
+	color: rgb(165, 81, 184);
+}
