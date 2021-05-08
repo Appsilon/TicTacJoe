@@ -344,6 +344,10 @@ server <- function(input, output, session) {
 
   output$TTJLevel <- renderText(paste("TicTacJoe is currently a", "<b>", TTJLevels[[val$level_idx]], "</b>"))
 
+  observeEvent(input$train_more, {
+    runjs(glue('document.getElementById("likelihood_graphs").style = "visibility: visible;";'))
+  })
+  
   output$move_prob_1 <- renderPlot({
     plot(val$check_prob_1*100, type='l', xlim=c(0,LengthOfTraining), ylim=c(0,100), xlab="", ylab="Likelihood of TTJs first move when he starts", main="Pick corner")
     points(val$training_step, tail(val$check_prob_1*100, n=1), col=NiceColorTTJ, cex=3, pch=19)

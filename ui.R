@@ -83,13 +83,15 @@ semanticPage(
   tags$br(),
   tags$br(),
     
-  div(class = "ui grid centered",
-      split_layout(
-        plotOutput("move_prob_1"),
-        plotOutput("move_prob_2"),
-        plotOutput("move_prob_3"),
-        style = "background-color: default;"
-      )
+  div(id="likelihood_graphs",
+    class = "ui grid centered",
+    style = "visibility: hidden;",
+    split_layout(
+      plotOutput("move_prob_1"),
+      plotOutput("move_prob_2"),
+      plotOutput("move_prob_3"),
+      style = "background-color: default;"
+    )
   ),
   
 )
