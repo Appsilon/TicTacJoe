@@ -1,6 +1,10 @@
 semanticPage(
   suppress_bootstrap = TRUE,
   useShinyjs(),
+  # Supress greying out of plots when training
+  tags$style(type="text/css",
+             ".recalculating {opacity: 1.0;}"
+  ),
   
   tags$head(
     tags$link(rel = "stylesheet", type = "text/css", href = "TicTacJoe.css")
