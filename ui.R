@@ -62,13 +62,20 @@ semanticPage(
     p("Initially, TicTacJoe performs each move randomly (all likelihoods are equivalent in a given turn), so he is a", strong("Noob"), "in the game.
       However, you can let TicTacJoe become better at the game, by letting him play against himself multiple times (click the", strong('Let TicTacJoe train'),"button).
       Observe, how he gradually becomes a Tic Tac Toe", strong("Guru"), ":)"),
-    p("The three graphs at the bottom visualize the evolution of the likelihoods of the first three possible moves TicTacJoe can make when he starts a game.
+    p("The three graphs at the bottom (visible after you start training) visualize the evolution of the likelihoods of the first three possible moves TicTacJoe can make when he starts a game.
       They start from being equal (33% each), and as the training progresses, freeze out to always choosing the optimal move."),
     p("Interestingly, TicTacJoe's brain is implemented explicitly in pure R (with no extra libraries). 
       It is an example of reinforcement learning, since as he plays against himself, he gets rewarded for moves leading him to win and hence encouraged to make them in the future.
-      Similarly, he gets penalized for those leading to his loss, and hence makes them less often.
-      To encourage the initial exploration, and exploitation in the later stages of training, a temperature-like mechanism is introduced.
-      Those mechanisms turn out to be enough to guarantee TicTacJoe almost always performs one of the optimal moves when trained to be a Guru.")
+      Similarly, he gets discouraged for those leading to his loss, and hence makes them less often.
+      To enhance the initial exploration, and then exploitation in the later stages of training, a temperature-like mechanism is introduced.
+      Those mechanisms turn out to be enough to guarantee TicTacJoe almost always performs one of the optimal moves when trained to be a Guru."),
+    br(),
+    br(),
+    br(),
+    div(style="text-align: right;",
+      p("built by Jędrzej Świeżewski (at  ", a(href="https://appsilon.com/", img(src="Appsilon_logo.png", width=120, style="vertical-align: middle; margin-bottom: 2px;")), " )"),
+      p("initial version of TicTacJoe's brain built together with Donald van den Hoogenband at ", a(href="https://itility.nl/", "Itility."))
+    )
   ),
   
   modal(
