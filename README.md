@@ -4,3 +4,5 @@ This repo holds an app with TicTacJoe - a reinforcement learning example for the
 Interestingly, the reinforcement learning back-end is implemented in pure R - with no libraries used.
 
 The first version of the code for the game's engine, was developed at Itility, by Donald van den Hoogenband and Jędrzej Świeżewski.
+
+![TicTacJoe in action!](https://github.com/Appsilon/TicTacJoe/blob/main/misc/TTJ.gif)
