@@ -21,7 +21,7 @@ steps_in_plot_chunk = 200 #100 #500
 
 # User
 NiceColorUser = rgb(69, 177, 239, max=255) # nice shade of blue
-NiceIconUser <- HTML("<i class='close icon icon'></i>")
+NiceIconUser = HTML("<i class='close icon icon'></i>")
 
 # TTJ
 NiceColorTTJ = rgb(165, 81, 184, max=255)  # nice shade of purple
@@ -35,29 +35,6 @@ load(file=file.path(PrecomputedFilesLocation, "LinkedStates.RData"))
 load(file=file.path(PrecomputedFilesLocation, "ProbStates.RData"))
 
 RandomProbStates = ProbStates  # this stores the untrained TTJ
-
-# Update button after click
-UpdateButton = function(WhichButton, toState, session) {
-  # Button is from the top_left, top_middle, top_right, middle_left, ... convention
-  # toState is "user" if the user clicked, "TTJ" if it is TTJs move, "default" if button should be returned to unpressed state
-  if(toState == "user") {
-    shinyjs::disable(WhichButton)
-    # modify to keep the color from getting greyed
-    runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{NiceColorUser}";'))
-    runjs(glue('document.getElementById("{WhichButton}").innerHTML = "{NiceIconUser}";'))
-  } else if(toState == "TTJ") {
-    shinyjs::disable(WhichButton)
-    # modify to keep the color from getting greyed
-    runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{NiceColorTTJ}";'))
-    update_action_button(session, input_id = WhichButton, icon = NiceIconTTJ)
-  } else if(toState == "default") {
-    shinyjs::enable(WhichButton)
-    runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{rgb(225, 225, 225, max=255)}";'))
-    runjs(glue('document.getElementById("{WhichButton}").innerHTML = "";'))
-    # update_action_button(session, input_id = WhichButton, icon = NULL, label = "")
-  }
-  return()
-}
 
 # TicTacJoe difficulty levels
 TTJLevels = c("Noob", "Young Padawan", "Guru")
@@ -195,10 +172,35 @@ DisplayWinner = function(winner) {
   addClass(id = "game_modal_header", class="game_ended")
 }
 
+# Update button after click
+UpdateButton = function(WhichButton, toState, session) {
+  # Button is from the top_left, top_middle, top_right, middle_left, ... convention
+  # toState is "user" if the user clicked, "TTJ" if it is TTJs move
+  if(toState == "user") {
+    runjs(glue('$("#{WhichButton}").attr("disabled","disabled");'))
+    runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{NiceColorUser}";'))
+    runjs(glue('document.getElementById("{WhichButton}").innerHTML = "{NiceIconUser}";'))
+  } else if(toState == "TTJ") {
+    runjs(glue('$("#{WhichButton}").attr("disabled","disabled");'))
+    runjs(glue('document.getElementById("{WhichButton}").style.backgroundColor = "{NiceColorTTJ}";'))
+    update_action_button(session, input_id = WhichButton, icon = NiceIconTTJ)
+  }
+  return()
+}
+
 # Hide who won the last game (e.g., when starting a new one)
 HideWinner = function() {
   runjs(glue('document.getElementById("game_header").textContent = "Let\'s play a game!";'))
   removeClass(id = "game_modal_header", class="game_ended")
   removeClass(id = "game_modal_header", class="game_ended_won")
   removeClass(id = "game_modal_header", class="game_ended_lost")
+}
+
+CleanBoardModal = function() {
+  runjs('var buttons = $("#game_modal .content button");
+             buttons.html("");
+             buttons.css("background-color", "rgb(225,225,225)");
+             buttons.removeAttr("disabled");
+        ')
+  HideWinner()
 }

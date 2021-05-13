@@ -73,11 +73,9 @@ server <- function(input, output, session) {
     val$PathRun = 1
     val$SelectedMoves = runif(N,0,1)
     val$move_nr = 1
-    for(tile in BoardTileNames) {
-      UpdateButton(WhichButton = tile, toState="default", session)
-    }
-    # Hide last winner
-    HideWinner()
+    
+    # Clean board modal
+    CleanBoardModal()
 
     # Create board for game
     create_modal(modal(
