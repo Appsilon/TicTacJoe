@@ -5,4 +5,6 @@ Interestingly, the reinforcement learning back-end is implemented in pure R - wi
 
 The first version of the code for the game's engine, was developed at Itility, by Donald van den Hoogenband and Jędrzej Świeżewski.
 
+The app is deployed to [shinyapps.io](https://swiezew.shinyapps.io/tictacjoe/).
+
 ![TicTacJoe in action!](https://github.com/Appsilon/TicTacJoe/blob/main/misc/TTJ.gif)
