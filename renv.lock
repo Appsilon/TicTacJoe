@@ -23,6 +23,13 @@
       "Repository": "CRAN",
       "Hash": "32e79b908fda56ee57fe518a8d37b864"
     },
+    "askpass": {
+      "Package": "askpass",
+      "Version": "1.1",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "e8a22846fff485f0be3770c2da758713"
+    },
     "base64enc": {
       "Package": "base64enc",
       "Version": "0.1-3",
@@ -58,6 +65,13 @@
       "Repository": "CRAN",
       "Hash": "8dc45fd8a1ee067a92b85ef274e66d6a"
     },
+    "curl": {
+      "Package": "curl",
+      "Version": "4.3.2",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "022c42d49c28e95d69ca60446dbabf88"
+    },
     "digest": {
       "Package": "digest",
       "Version": "0.6.29",
@@ -71,13 +85,6 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "bb0eec2fe32e88d9e2836c2f73ea2077"
-    },
-    "evaluate": {
-      "Package": "evaluate",
-      "Version": "0.14",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "ec8ca05cffcc70569eaaad8469d2a3a7"
     },
     "fastmap": {
       "Package": "fastmap",
@@ -106,13 +113,6 @@
       "Source": "Repository",
       "Repository": "RSPM",
       "Hash": "4f2596dfb05dac67b9dc558e5c6fba2e"
-    },
-    "highr": {
-      "Package": "highr",
-      "Version": "0.9",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "8eb36c8125038e648e5d111c0d7b2ed4"
     },
     "htmltools": {
       "Package": "htmltools",
@@ -149,13 +149,6 @@
       "Repository": "RSPM",
       "Hash": "d07e729b27b372429d42d24d503613a0"
     },
-    "knitr": {
-      "Package": "knitr",
-      "Version": "1.36",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "46344b93f8854714cdf476433a59ed10"
-    },
     "later": {
       "Package": "later",
       "Version": "1.3.0",
@@ -183,6 +176,20 @@
       "Source": "Repository",
       "Repository": "CRAN",
       "Hash": "18e9c28c1d3ca1560ce30658b22ce104"
+    },
+    "openssl": {
+      "Package": "openssl",
+      "Version": "2.0.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "cf4329aac12c2c44089974559c18e446"
+    },
+    "packrat": {
+      "Package": "packrat",
+      "Version": "0.7.0",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "95e8c3825efcaad09411799da92c0af9"
     },
     "promises": {
       "Package": "promises",
@@ -219,12 +226,19 @@
       "Repository": "RSPM",
       "Hash": "04884d9a75d778aca22c7154b8333ec9"
     },
-    "rmarkdown": {
-      "Package": "rmarkdown",
-      "Version": "2.11",
+    "rsconnect": {
+      "Package": "rsconnect",
+      "Version": "0.8.25",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "320017b52d05a943981272b295750388"
+      "Hash": "c78e0acc405a6990475f1f9500ebe66c"
+    },
+    "rstudioapi": {
+      "Package": "rstudioapi",
+      "Version": "0.13",
+      "Source": "Repository",
+      "Repository": "CRAN",
+      "Hash": "06c85365a03fdaf699966cc1d3cf53ea"
     },
     "sass": {
       "Package": "sass",
@@ -261,26 +275,12 @@
       "Repository": "CRAN",
       "Hash": "947e4e02a79effa5d512473e10f41797"
     },
-    "stringi": {
-      "Package": "stringi",
-      "Version": "1.7.6",
-      "Source": "Repository",
-      "Repository": "RSPM",
-      "Hash": "bba431031d30789535745a9627ac9271"
-    },
-    "stringr": {
-      "Package": "stringr",
-      "Version": "1.4.0",
+    "sys": {
+      "Package": "sys",
+      "Version": "3.4",
       "Source": "Repository",
       "Repository": "CRAN",
-      "Hash": "0759e6b6c0957edb1311028a49a35e76"
-    },
-    "tinytex": {
-      "Package": "tinytex",
-      "Version": "0.34",
-      "Source": "Repository",
-      "Repository": "CRAN",
-      "Hash": "043daa786f4d254f0031534150e28d42"
+      "Hash": "b227d13e29222b4574486cfcbde077fa"
     },
     "withr": {
       "Package": "withr",
@@ -288,13 +288,6 @@
       "Source": "Repository",
       "Repository": "RSPM",
       "Hash": "c0e49a9760983e81e55cdd9be92e7182"
-    },
-    "xfun": {
-      "Package": "xfun",
-      "Version": "0.30",
-      "Source": "Repository",
-      "Repository": "RSPM",
-      "Hash": "e83f48136b041845e50a6658feffb197"
     },
     "xtable": {
       "Package": "xtable",
