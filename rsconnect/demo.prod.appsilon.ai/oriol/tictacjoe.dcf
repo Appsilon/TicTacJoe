@@ -1,0 +1,14 @@
+name: tictacjoe
+title: TicTacJoe
+username: oriol
+account: oriol
+server: demo.prod.appsilon.ai
+hostUrl: https://demo.prod.appsilon.ai/__api__
+appId: 89
+bundleId: 136
+url: https://demo.prod.appsilon.ai/content/76c9b873-b86c-470e-97f4-a6deb6fa997d/
+when: 1650999332.57635
+lastSyncTime: 1650999332.57638
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: .Rprofile|misc/Techincal_presentation.nb.html|misc/Techincal_presentation.Rmd|misc/TTJ.gif
